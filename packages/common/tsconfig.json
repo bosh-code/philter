@@ -1,7 +1,6 @@
 {
-  "extends": "../../node_modules/gts/tsconfig-google.json",
+  "extends": "../../tsconfig.base.json",
   "compilerOptions": {
-    "composite": true,
     // JavaScript APIs supported by Rhino 1.7.13
     // See https://mozilla.github.io/rhino/compat/engines.html for more info
     "lib": [
@@ -23,7 +22,7 @@
     "newLine": "LF",
     "outDir": "build",
     "paths": {
-      "zlib.ash": ["../../node_modules/kolmafia/contrib/zlib.ash.d.ts"]
+      "zlib.ash": ["./node_modules/kolmafia/contrib/zlib.ash.d.ts"]
     },
     "rootDir": ".",
     // Downstream packages should use transpilers to transpile our output to

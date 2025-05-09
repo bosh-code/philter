@@ -16,6 +16,5 @@
     "target": "ESNext",
     "types": ["vite/client"]
   },
-  "include": ["./src"],
-  "references": [{"path": "../common"}]
+  "include": ["./src"]
 }
