@@ -13,9 +13,9 @@
     "compile": "tsc -b",
     "fix": "eslint --fix .",
     "lint": "eslint .",
-    "pretest": "yarn run compile",
+    "pretest": "pnpm run compile",
     "test": "echo \"Error: no test specified\"",
-    "posttest": "yarn run lint"
+    "posttest": "pnpm run lint"
   },
   "eslintConfig": {
     "parserOptions": {
@@ -23,22 +23,22 @@
     }
   },
   "dependencies": {
-    "@philter/common": "*",
-    "@types/minimist": "^1.2.1",
+    "@philter/common": "workspace:*",
+    "@types/minimist": "^1.2.5",
     "kolmafia": "npm:kolmafia-types",
     "kolmafia-util": "^0.3.0",
-    "minimist": "^1.2.5",
-    "string-argv": "^0.3.1"
+    "minimist": "^1.2.8",
+    "string-argv": "^0.3.2"
   },
   "devDependencies": {
-    "@rollup/plugin-buble": "^0.21.3",
-    "@rollup/plugin-commonjs": "^20.0.0",
-    "@rollup/plugin-node-resolve": "^13.0.0",
-    "@rollup/plugin-typescript": "^8.2.1",
+    "@rollup/plugin-buble": "^1.0.3",
+    "@rollup/plugin-commonjs": "^28.0.3",
+    "@rollup/plugin-node-resolve": "^16.0.1",
+    "@rollup/plugin-typescript": "^12.1.2",
     "buble-config-rhino": "^0.1.0",
-    "gts": "^3.1.0",
-    "rollup": "^2.52.0",
-    "tslib": "^2.3.0",
-    "typescript": "^4.3.2"
+    "gts": "^6.0.2",
+    "rollup": "^4.40.2",
+    "tslib": "^2.8.1",
+    "typescript": "^5.8.3"
   }
 }
