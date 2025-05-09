@@ -1,7 +1,5 @@
 'use strict';
 
-Object.defineProperty(exports, '__esModule', { value: true });
-
 var kolmafia = require('kolmafia');
 var zlib_ash = require('zlib.ash');
 
@@ -429,7 +427,6 @@ function sendGift(ref) {
     var meat = ref.meat; if ( meat === void 0 ) { meat = 0; }
     var items = ref.items; if ( items === void 0 ) { items = new Map(); }
     var insideNote = ref.insideNote; if ( insideNote === void 0 ) { insideNote = ''; }
-    var useStorage = ref.useStorage;
 
     if (!Number.isInteger(meat)) {
         throw new GiftError(("Meat amount must be integer (got " + meat + ")"));
@@ -447,8 +444,8 @@ function sendGift(ref) {
         if (!(Number.isInteger(amount) && amount > 0)) {
             throw new GiftError(recipent, ("Invalid item amount: Cannot send " + amount + " of " + item));
         }
-        else if ((useStorage ? kolmafia.storageAmount(item) : kolmafia.itemAmount(item)) < amount) {
-            throw new GiftError(recipent, ("Insufficient item in " + (useStorage ? 'storage' : 'inventory') + ": Cannot send " + amount + " of " + item));
+        else if ((kolmafia.itemAmount(item)) < amount) {
+            throw new GiftError(recipent, ("Insufficient item in " + ('inventory') + ": Cannot send " + amount + " of " + item));
         }
     }
     if (meat === 0 && items.size === 0) {
@@ -459,18 +456,18 @@ function sendGift(ref) {
     // Always use plain brown wrapper or less-than-three-shaped box, since they
     // are the cheapest options per item
     var packagingCost = items.size * 50;
-    if ((useStorage ? kolmafia.myStorageMeat() : kolmafia.myMeat()) < meat + packagingCost) {
-        throw new GiftError(recipent, ("Insufficient meat in " + (useStorage ? 'storage' : 'inventory') + ": Cannot send " + meat + " meat and " + (items.size) + " item" + (items.size > 1 ? 's' : '')));
+    if ((kolmafia.myMeat()) < meat + packagingCost) {
+        throw new GiftError(recipent, ("Insufficient meat in " + ('inventory') + ": Cannot send " + meat + " meat and " + (items.size) + " item" + (items.size > 1 ? 's' : '')));
     }
     var itemsToSend = Array.from(items);
     var meatToSend = meat;
     var MAX_ITEMS_PER_PACKAGE = 2;
-    var prefix = useStorage ? 'hagnks_' : '';
+    var prefix = '';
     for (var i = 0; i < itemsToSend.length || meatToSend > 0; i += MAX_ITEMS_PER_PACKAGE) {
         var itemsForCurrentPackage = itemsToSend.slice(i, i + MAX_ITEMS_PER_PACKAGE);
         // 1 for plain brown wrapper, 2 for less-than-three-shaped box
         var packageType = itemsForCurrentPackage.length > 1 ? 2 : 1;
-        var itemSource = useStorage ? 1 : 0;
+        var itemSource = 0;
         var itemUrlStr = itemsForCurrentPackage
             .map((ref, index) => {
                 var item = ref[0];
@@ -537,9 +534,7 @@ function sendToPlayer(ref) {
             message: message,
             meat: meat,
             items: giftItems,
-            insideNote: insideNote,
-            useStorage: false,
-        });
+            insideNote: insideNote});
     }
 }
 
@@ -1114,7 +1109,8 @@ function printMallAndMakePriceCache(items, cleanupRules, config) {
                 // mall max price (999,999,999 meat)
                 var price = 0;
                 if (config.mallPricingMode === 'auto') {
-                    price = salePrice(item, rule ? rule.minPrice : 0);
+                    // ensure it's a mall cleanup action.
+                    price = salePrice(item, rule && rule.action === 'MALL' ? rule.minPrice : 0);
                     msg += " @ " + (zlib_ash.rnum(price));
                 }
                 priceCache.set(item, price);

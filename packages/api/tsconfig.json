@@ -1,12 +1,13 @@
-// "Solution" tsconfig used to compile housekeeping scripts for Node.js
-// Currently, this is used only to type-check the Rollup config in the editor.
 {
-  "extends": "gts/tsconfig-google.json",
+  "extends": "../../tsconfig.base.json",
   "compilerOptions": {
-    // Override setting set by GTS's tsconfig to make @rollup/plugin-typescript
-    // happy
-    "declaration": false
-  },
-  "files": ["rollup.config.ts"],
-  "references": [{"path": "../common"}]
+    "paths": {
+      "zlib.ash": [
+        "./node_modules/kolmafia/contrib/zlib.ash.d.ts"
+      ],
+      "universal-router/sync": [
+        "./node_modules/universal-router/universal-router-sync.d.ts"
+      ]
+    }
+  }
 }

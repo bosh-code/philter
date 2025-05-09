@@ -8,6 +8,5 @@
     // libs (e.g. "lib.es2017.object.d.ts")
     "types": []
   },
-  "files": ["rollup.config.ts"],
-  "references": [{"path": "src"}]
+  "files": ["rollup.config.ts"]
 }

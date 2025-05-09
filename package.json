@@ -1,15 +1,12 @@
 {
+  "name": "philter",
   "private": true,
-  "workspaces": [
-    "packages/*"
-  ],
   "scripts": {
-    "build": "yarn workspace @philter/common build && yarn workspace @philter/cli build && yarn workspace @philter/e2e-tests build && yarn workspace @philter/api build && yarn workspace @philter/manager build",
-    "build:cli": "yarn workspace @philter/common build && yarn workspace @philter/cli build",
-    "build:e2e": "yarn workspace @philter/common build && yarn workspace @philter/e2e-tests build",
-    "build:manager": "yarn workspace @philter/common build && yarn workspace @philter/api build && yarn workspace @philter/manager build",
-    "lint": "eslint .",
-    "postinstall": "patch-package"
+    "build": "pnpm -r --filter=./packages/* run build",
+    "build:cli": "pnpm --filter @philter/common build && pnpm --filter @philter/cli build",
+    "build:e2e": "pnpm --filter @philter/common build && pnpm --filter @philter/e2e-tests build",
+    "build:manager": "pnpm --filter @philter/common build && pnpm --filter @philter/api build && pnpm --filter @philter/manager build",
+    "lint": "eslint ."
   },
   "eslintConfig": {
     "extends": "./node_modules/gts/",
@@ -27,8 +24,5 @@
       "/packages/*/build/",
       "/release/"
     ]
-  },
-  "devDependencies": {
-    "postinstall-postinstall": "^2.1.0"
   }
 }

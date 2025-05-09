@@ -68,8 +68,8 @@ function printMallAndMakePriceCache(
         // mall max price (999,999,999 meat)
         let price = 0;
         if (config.mallPricingMode === 'auto') {
-          price = salePrice(item, rule ? rule.minPrice : 0);
-          msg += ` @ ${rnum(price)}`;
+          // ensure it's a mall cleanup action.
+          price = salePrice(item, rule && rule.action === 'MALL' ? rule.minPrice : 0);          msg += ` @ ${rnum(price)}`;
         }
         priceCache.set(item, price);
         lineValue += amount * price;

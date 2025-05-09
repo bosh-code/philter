@@ -32,11 +32,9 @@
  * better native ESM support.
  */
 
-/* eslint-disable node/no-unpublished-import */
-import buble from '@rollup/plugin-buble';
+import babel from '@rollup/plugin-babel';
 import {nodeResolve} from '@rollup/plugin-node-resolve';
 import typescript from '@rollup/plugin-typescript';
-import createPreset from 'buble-config-rhino';
 import type {RollupOptions} from 'rollup';
 import copy from 'rollup-plugin-copy';
 // Import @philter/common using a relative path. This is a hack, btw.
@@ -62,7 +60,16 @@ const config: RollupOptions = {
       sourceMap: false,
       tsconfig: 'src/tsconfig.json',
     }),
-    buble(createPreset()),
+    babel({
+      babelHelpers: 'bundled',
+      presets: [
+        ['@babel/preset-env', {
+          targets: {
+            rhino: '1.7.13'
+          }
+        }]
+      ]
+    }),
     copy({
       hook: 'writeBundle',
       targets: [
