@@ -68,7 +68,7 @@ function generateRedirectPage(url: string) {
 
 export function main() {
   // TODO: Add require() to kolmafia-types if possible
-  // @ts-expect-error No require()
+  // @ts-ignore
   const __filename: string = require.main.id;
   const safeScriptPath = __filename.replace(/(.*?)(?=\/relay\/)/i, '');
 
