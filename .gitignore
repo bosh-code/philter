@@ -127,3 +127,7 @@ dist
 
 # Build cache of Rollup's TypeScript plugin
 .rollup.cache/
+rollup.config-*.mjs
+
+# Jetbrains IDEs
+.idea/
