@@ -1,6 +1,6 @@
 // tsconfig for building the relay script
 {
-  "extends": "gts/tsconfig-google.json",
+  "extends": "../tsconfig.json",
   "compilerOptions": {
     // Don't generate type definitions (Rhino doesn't need them anyway)
     "declaration": false,
@@ -21,11 +21,8 @@
     ],
     // Emit ES modules and rely on the bundler to convert us to CommonJS
     "module": "ES2015",
-    "moduleResolution": "node",
+    "moduleResolution": "bundler",
     "outDir": "../build",
-    "paths": {
-      "zlib.ash": ["../../../node_modules/kolmafia/contrib/zlib.ash"]
-    },
     "rootDir": ".",
     // Don't generate source maps (Rhino doesn't support them anyway)
     "sourceMap": false,

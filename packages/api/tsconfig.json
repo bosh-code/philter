@@ -4,6 +4,9 @@
     "paths": {
       "zlib.ash": [
         "./node_modules/kolmafia/contrib/zlib.ash.d.ts"
+      ],
+      "universal-router/sync": [
+        "./node_modules/universal-router/universal-router-sync.d.ts"
       ]
     }
   }

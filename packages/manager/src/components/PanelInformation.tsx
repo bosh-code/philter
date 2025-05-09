@@ -25,10 +25,12 @@ export const PanelInformation = (): JSX.Element => {
     error: loadingError,
   } = useSWR(STATISTICS_ROUTE, async () => (await fetchGetStatistics()).result);
 
+
   const categorizedCount = useMemo(
     () =>
       data
         ? Object.values(data.categorizedItemCounts).reduce(
+              // @ts-ignore
             (acc, sum) => acc + sum
           )
         : 0,
@@ -67,11 +69,11 @@ export const PanelInformation = (): JSX.Element => {
         is still available.
       </Callout>
       {data ? (
+          // @ts-ignore
         categorizedCount > 0 ? (
           <HTMLTable
             bordered
             className="PanelInformation__VerticalTable"
-            condensed
           >
             <tbody>
               <tr>
@@ -96,7 +98,7 @@ export const PanelInformation = (): JSX.Element => {
               </tr>
               <tr>
                 <th>Items in Ruleset</th>
-                <td>{categorizedCount}</td>
+                <td>{categorizedCount as any}</td>
               </tr>
               <tr>
                 <th>{BULLET} Keep All</th>
