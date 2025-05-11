@@ -19,17 +19,20 @@
   },
   "scripts": {
     "build": "rm -rf ./build && tsc",
-    "clean": "gts clean",
-    "fix": "eslint --fix .",
-    "lint": "eslint .",
-    "test": "yarn run build && yarn run lint"
+    "lint": "eslint src && prettier --check .",
+    "format": "eslint src --fix && prettier --write .",
+    "madge": "madge --circular . ./src/index.ts",
+    "pre-commit": "lint-staged"
   },
   "dependencies": {
     "kolmafia": "^5.28389.0",
     "kolmafia-types": "0.3.0"
   },
   "devDependencies": {
+    "eslint": "^9.9.0",
     "gts": "^3.1.0",
+    "madge": "^8.0.0",
+    "prettier": "^3.3.3",
     "typescript": "^4.3.2"
   }
 }

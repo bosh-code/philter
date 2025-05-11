@@ -5,28 +5,19 @@
     "packages/*"
   ],
   "scripts": {
-    "build": "yarn workspace @philter/common build && yarn workspace @philter/cli build && yarn workspace @philter/e2e-tests build && yarn workspace @philter/api build && yarn workspace @philter/manager build",
-    "build:cli": "yarn workspace @philter/common build && yarn workspace @philter/cli build",
-    "build:e2e": "yarn workspace @philter/common build && yarn workspace @philter/e2e-tests build",
-    "build:manager": "yarn workspace @philter/common build && yarn workspace @philter/api build && yarn workspace @philter/manager build",
-    "lint": "eslint ."
+    "build": "yarn workspaces foreach -ptv run build",
+    "check": "yarn workspaces foreach -pv run check",
+    "lint": "yarn workspaces foreach -pv run lint",
+    "format": "yarn run prettier --write .github && yarn workspaces foreach -pv run format",
+    "pre-commit": "yarn workspaces foreach -v run pre-commit",
+    "madge": "yarn workspaces foreach -v run madge",
+    "prepare": "husky"
   },
-  "packageManager": "yarn@3.6.4",
-  "eslintConfig": {
-    "extends": "./node_modules/gts/",
-    "rules": {
-      "node/no-unpublished-import": [
-        "error",
-        {
-          "allowModules": [
-            "kolmafia"
-          ]
-        }
-      ]
-    },
-    "ignorePatterns": [
-      "/packages/*/build/",
-      "/release/"
-    ]
-  }
+  "devDependencies": {
+    "eslint": "^9.9.0",
+    "husky": "^9.1.5",
+    "prettier": "^3.3.3",
+    "typescript": "^5.5.4"
+  },
+  "packageManager": "yarn@3.6.4"
 }
