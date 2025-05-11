@@ -193,7 +193,7 @@ function encodeItem(item) {
  * @return Mapping of Item to amount
  */
 function toItemMap(items) {
-    return new Map(Object.keys(items).map(itemStr => [Item.get(itemStr), items[itemStr]]));
+    return new Map(Object.keys(items).map(itemStr => [kolmafia.Item.get(itemStr), items[itemStr]]));
 }
 
 /**
@@ -305,9 +305,9 @@ function saveCleanupRulesetFile(filepath, cleanupRulesMap) {
  */
 function isCleanable(it) {
     // For some reason Item.get("none") is displayable
-    if (it === Item.get('none'))
+    if (it === kolmafia.Item.get('none'))
         { return false; }
-    if (Item.get([
+    if (kolmafia.Item.get([
         "Boris's key",
         "Jarlsberg's key",
         "Richard's star key",
@@ -331,7 +331,7 @@ function isCleanable(it) {
     // Since a player can have multiple DNOTC boxes from different years, and we
     // don't know the associated year of a DNOTC box, our best bet is to try
     // opening them all.
-    if (it === Item.get('DNOTC Box')) {
+    if (it === kolmafia.Item.get('DNOTC Box')) {
         var today = kolmafia.todayToString();
         if (today.slice(4, 6) === '12' && Number(today.slice(6, 8)) < 25) {
             return false;
@@ -548,7 +548,7 @@ function formatDateClf(date) {
  */
 function idMappingToItemMap(itemMapping) {
     return new Map(Object.keys(itemMapping).map(itemId => [
-        Item.get(Number(itemId)),
+        kolmafia.Item.get(Number(itemId)),
         itemMapping[itemId] ]));
 }
 /**
@@ -573,7 +573,7 @@ function getDisplayCaseMap() {
     // There is no equivalent of getInventory(), getCloset(), etc.
     var displayCaseMap = new Map();
     if (kolmafia.haveDisplay()) {
-        for (var item of Item.all()) {
+        for (var item of kolmafia.Item.all()) {
             var amount = kolmafia.displayAmount(item);
             if (amount > 0) {
                 displayCaseMap.set(item, amount);
@@ -626,7 +626,7 @@ function getInventoryStateWithMaps() {
 /**
  * @file Tools for managing `ItemInfo` objects.
  */
-var BREAKABLE_ITEMS = Item.get([
+var BREAKABLE_ITEMS = kolmafia.Item.get([
     'BRICKO hat',
     'BRICKO sword',
     'BRICKO pants' ]);
@@ -654,7 +654,7 @@ function isCraftable(item) {
                 CRAFTABLES.add(kolmafia.toItem(ingredientName));
             }
         }
-        for (var item$1 of Item.get([
+        for (var item$1 of kolmafia.Item.get([
             'hot nuggets',
             'cold nuggets',
             'spooky nuggets',
@@ -666,8 +666,8 @@ function isCraftable(item) {
     }
     return CRAFTABLES.has(item);
 }
-var USELESS_POWDER = Item.get('useless powder');
-var MALUSABLES = new Set(Item.get([
+var USELESS_POWDER = kolmafia.Item.get('useless powder');
+var MALUSABLES = new Set(kolmafia.Item.get([
     'twinkly powder',
     'hot powder',
     'cold powder',
@@ -772,7 +772,7 @@ function lexer(str) {
                 break;
             }
             if (!name)
-                { throw new TypeError("Missing parameter name at " + i); }
+                { throw new TypeError("Missing parameter name at ".concat(i)); }
             tokens.push({ type: "NAME", index: i, value: name });
             i = j;
             continue;
@@ -782,7 +782,7 @@ function lexer(str) {
             var pattern = "";
             var j = i + 1;
             if (str[j] === "?") {
-                throw new TypeError("Pattern cannot start with \"?\" at " + j);
+                throw new TypeError("Pattern cannot start with \"?\" at ".concat(j));
             }
             while (j < str.length) {
                 if (str[j] === "\\") {
@@ -799,15 +799,15 @@ function lexer(str) {
                 else if (str[j] === "(") {
                     count++;
                     if (str[j + 1] !== "?") {
-                        throw new TypeError("Capturing groups are not allowed at " + j);
+                        throw new TypeError("Capturing groups are not allowed at ".concat(j));
                     }
                 }
                 pattern += str[j++];
             }
             if (count)
-                { throw new TypeError("Unbalanced pattern at " + i); }
+                { throw new TypeError("Unbalanced pattern at ".concat(i)); }
             if (!pattern)
-                { throw new TypeError("Missing pattern at " + i); }
+                { throw new TypeError("Missing pattern at ".concat(i)); }
             tokens.push({ type: "PATTERN", index: i, value: pattern });
             i = j;
             continue;
@@ -823,8 +823,7 @@ function lexer(str) {
 function parse(str, options) {
     if (options === void 0) { options = {}; }
     var tokens = lexer(str);
-    var _a = options.prefixes, prefixes = _a === void 0 ? "./" : _a;
-    var defaultPattern = "[^" + escapeString(options.delimiter || "/#?") + "]+?";
+    var _a = options.prefixes, prefixes = _a === void 0 ? "./" : _a, _b = options.delimiter, delimiter = _b === void 0 ? "/#?" : _b;
     var result = [];
     var key = 0;
     var i = 0;
@@ -838,16 +837,33 @@ function parse(str, options) {
         if (value !== undefined)
             { return value; }
         var _a = tokens[i], nextType = _a.type, index = _a.index;
-        throw new TypeError("Unexpected " + nextType + " at " + index + ", expected " + type);
+        throw new TypeError("Unexpected ".concat(nextType, " at ").concat(index, ", expected ").concat(type));
     };
     var consumeText = function () {
         var result = "";
         var value;
-        // tslint:disable-next-line
         while ((value = tryConsume("CHAR") || tryConsume("ESCAPED_CHAR"))) {
             result += value;
         }
         return result;
+    };
+    var isSafe = function (value) {
+        for (var _i = 0, delimiter_1 = delimiter; _i < delimiter_1.length; _i++) {
+            var char = delimiter_1[_i];
+            if (value.indexOf(char) > -1)
+                { return true; }
+        }
+        return false;
+    };
+    var safePattern = function (prefix) {
+        var prev = result[result.length - 1];
+        var prevText = prefix || (prev && typeof prev === "string" ? prev : "");
+        if (prev && !prevText) {
+            throw new TypeError("Must have text between two parameters, missing text after \"".concat(prev.name, "\""));
+        }
+        if (!prevText || isSafe(prevText))
+            { return "[^".concat(escapeString(delimiter), "]+?"); }
+        return "(?:(?!".concat(escapeString(prevText), ")[^").concat(escapeString(delimiter), "])+?");
     };
     while (i < tokens.length) {
         var char = tryConsume("CHAR");
@@ -867,8 +883,8 @@ function parse(str, options) {
                 name: name || key++,
                 prefix: prefix,
                 suffix: "",
-                pattern: pattern || defaultPattern,
-                modifier: tryConsume("MODIFIER") || ""
+                pattern: pattern || safePattern(prefix),
+                modifier: tryConsume("MODIFIER") || "",
             });
             continue;
         }
@@ -890,10 +906,10 @@ function parse(str, options) {
             mustConsume("CLOSE");
             result.push({
                 name: name_1 || (pattern_1 ? key++ : ""),
-                pattern: name_1 && !pattern_1 ? defaultPattern : pattern_1,
+                pattern: name_1 && !pattern_1 ? safePattern(prefix) : pattern_1,
                 prefix: prefix,
                 suffix: suffix,
-                modifier: tryConsume("MODIFIER") || ""
+                modifier: tryConsume("MODIFIER") || "",
             });
             continue;
         }
@@ -922,7 +938,6 @@ function regexpToFunction(re, keys, options) {
         var path = m[0], index = m.index;
         var params = Object.create(null);
         var _loop_1 = function (i) {
-            // tslint:disable-next-line
             if (m[i] === undefined)
                 { return "continue"; }
             var key = keys[i - 1];
@@ -969,7 +984,7 @@ function regexpToRegexp(path, keys) {
             prefix: "",
             suffix: "",
             modifier: "",
-            pattern: ""
+            pattern: "",
         });
         execResult = groupsRegex.exec(path.source);
     }
@@ -980,7 +995,7 @@ function regexpToRegexp(path, keys) {
  */
 function arrayToRegexp(paths, keys, options) {
     var parts = paths.map(function (path) { return pathToRegexp(path, keys, options).source; });
-    return new RegExp("(?:" + parts.join("|") + ")", flags(options));
+    return new RegExp("(?:".concat(parts.join("|"), ")"), flags(options));
 }
 /**
  * Create a path regexp from string input.
@@ -993,9 +1008,9 @@ function stringToRegexp(path, keys, options) {
  */
 function tokensToRegexp(tokens, keys, options) {
     if (options === void 0) { options = {}; }
-    var _a = options.strict, strict = _a === void 0 ? false : _a, _b = options.start, start = _b === void 0 ? true : _b, _c = options.end, end = _c === void 0 ? true : _c, _d = options.encode, encode = _d === void 0 ? function (x) { return x; } : _d;
-    var endsWith = "[" + escapeString(options.endsWith || "") + "]|$";
-    var delimiter = "[" + escapeString(options.delimiter || "/#?") + "]";
+    var _a = options.strict, strict = _a === void 0 ? false : _a, _b = options.start, start = _b === void 0 ? true : _b, _c = options.end, end = _c === void 0 ? true : _c, _d = options.encode, encode = _d === void 0 ? function (x) { return x; } : _d, _e = options.delimiter, delimiter = _e === void 0 ? "/#?" : _e, _f = options.endsWith, endsWith = _f === void 0 ? "" : _f;
+    var endsWithRe = "[".concat(escapeString(endsWith), "]|$");
+    var delimiterRe = "[".concat(escapeString(delimiter), "]");
     var route = start ? "^" : "";
     // Iterate over the tokens and create our regexp string.
     for (var _i = 0, tokens_1 = tokens; _i < tokens_1.length; _i++) {
@@ -1012,37 +1027,39 @@ function tokensToRegexp(tokens, keys, options) {
                 if (prefix || suffix) {
                     if (token.modifier === "+" || token.modifier === "*") {
                         var mod = token.modifier === "*" ? "?" : "";
-                        route += "(?:" + prefix + "((?:" + token.pattern + ")(?:" + suffix + prefix + "(?:" + token.pattern + "))*)" + suffix + ")" + mod;
+                        route += "(?:".concat(prefix, "((?:").concat(token.pattern, ")(?:").concat(suffix).concat(prefix, "(?:").concat(token.pattern, "))*)").concat(suffix, ")").concat(mod);
                     }
                     else {
-                        route += "(?:" + prefix + "(" + token.pattern + ")" + suffix + ")" + token.modifier;
+                        route += "(?:".concat(prefix, "(").concat(token.pattern, ")").concat(suffix, ")").concat(token.modifier);
                     }
                 }
                 else {
-                    route += "(" + token.pattern + ")" + token.modifier;
+                    if (token.modifier === "+" || token.modifier === "*") {
+                        throw new TypeError("Can not repeat \"".concat(token.name, "\" without a prefix and suffix"));
+                    }
+                    route += "(".concat(token.pattern, ")").concat(token.modifier);
                 }
             }
             else {
-                route += "(?:" + prefix + suffix + ")" + token.modifier;
+                route += "(?:".concat(prefix).concat(suffix, ")").concat(token.modifier);
             }
         }
     }
     if (end) {
         if (!strict)
-            { route += delimiter + "?"; }
-        route += !options.endsWith ? "$" : "(?=" + endsWith + ")";
+            { route += "".concat(delimiterRe, "?"); }
+        route += !options.endsWith ? "$" : "(?=".concat(endsWithRe, ")");
     }
     else {
         var endToken = tokens[tokens.length - 1];
         var isEndDelimited = typeof endToken === "string"
-            ? delimiter.indexOf(endToken[endToken.length - 1]) > -1
-            : // tslint:disable-next-line
-                endToken === undefined;
+            ? delimiterRe.indexOf(endToken[endToken.length - 1]) > -1
+            : endToken === undefined;
         if (!strict) {
-            route += "(?:" + delimiter + "(?=" + endsWith + "))?";
+            route += "(?:".concat(delimiterRe, "(?=").concat(endsWithRe, "))?");
         }
         if (!isEndDelimited) {
-            route += "(?=" + delimiter + "|" + endsWith + ")";
+            route += "(?=".concat(delimiterRe, "|").concat(endsWithRe, ")");
         }
     }
     return new RegExp(route, flags(options));
@@ -1230,7 +1247,7 @@ var UniversalRouterSync = function () {
       return next(resume, parent, result);
     }
 
-    context.next = next;
+    context['next'] = next;
 
     try {
       return next(true, this.root);

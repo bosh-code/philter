@@ -104,7 +104,7 @@ function createMapLoader(parse) {
  * @return Mapping of Item to amount
  */
 function toItemMap(items) {
-    return new Map(Object.keys(items).map(itemStr => [Item.get(itemStr), items[itemStr]]));
+    return new Map(Object.keys(items).map(itemStr => [kolmafia.Item.get(itemStr), items[itemStr]]));
 }
 
 /**
@@ -173,9 +173,9 @@ var loadCleanupRulesetFile = createMapLoader((ref, _, filename) => {
  */
 function isCleanable(it) {
     // For some reason Item.get("none") is displayable
-    if (it === Item.get('none'))
+    if (it === kolmafia.Item.get('none'))
         { return false; }
-    if (Item.get([
+    if (kolmafia.Item.get([
         "Boris's key",
         "Jarlsberg's key",
         "Richard's star key",
@@ -199,7 +199,7 @@ function isCleanable(it) {
     // Since a player can have multiple DNOTC boxes from different years, and we
     // don't know the associated year of a DNOTC box, our best bet is to try
     // opening them all.
-    if (it === Item.get('DNOTC Box')) {
+    if (it === kolmafia.Item.get('DNOTC Box')) {
         var today = kolmafia.todayToString();
         if (today.slice(4, 6) === '12' && Number(today.slice(6, 8)) < 25) {
             return false;
@@ -694,15 +694,15 @@ function countIngredient(source, target) {
 }
 function campAmount(it) {
     switch (it) {
-        case Item.get('Little Geneticist DNA-Splicing Lab'):
-        case Item.get('snow machine'):
-        case Item.get('spinning wheel'):
-        case Item.get('Warbear auto-anvil'):
-        case Item.get('Warbear chemistry lab'):
-        case Item.get('Warbear high-efficiency still'):
-        case Item.get('Warbear induction oven'):
-        case Item.get('Warbear jackhammer drill press'):
-        case Item.get('Warbear LP-ROM burner'):
+        case kolmafia.Item.get('Little Geneticist DNA-Splicing Lab'):
+        case kolmafia.Item.get('snow machine'):
+        case kolmafia.Item.get('spinning wheel'):
+        case kolmafia.Item.get('Warbear auto-anvil'):
+        case kolmafia.Item.get('Warbear chemistry lab'):
+        case kolmafia.Item.get('Warbear high-efficiency still'):
+        case kolmafia.Item.get('Warbear induction oven'):
+        case kolmafia.Item.get('Warbear jackhammer drill press'):
+        case kolmafia.Item.get('Warbear LP-ROM burner'):
             if (toItemMap(kolmafia.getCampground()).has(it))
                 { return 1; }
     }
@@ -787,8 +787,8 @@ function cleanupSimple(ref) {
     }));
     // TODO: Move this check to planning stage
     // (this should be checked only for the 'USE' action)
-    if (kolmafia.itemAmount(Item.get("bitchin' meatcar")) === 0) {
-        sortedItems.delete(Item.get('Degrassi Knoll shopping list'));
+    if (kolmafia.itemAmount(kolmafia.Item.get("bitchin' meatcar")) === 0) {
+        sortedItems.delete(kolmafia.Item.get('Degrassi Knoll shopping list'));
     }
     for (var chunk of grouper(sortedItems, 11)) {
         var messages = [];
@@ -998,7 +998,7 @@ var cleanupSendGifts = (plan, config) => {
     return { shouldReplan: shouldReplan, profit: profit };
 };
 
-var SAUCE_MULT_POTIONS = new Set(Item.get([
+var SAUCE_MULT_POTIONS = new Set(kolmafia.Item.get([
     'philter of phorce',
     'Frogade',
     'potion of potency',
@@ -1045,7 +1045,7 @@ var SAUCE_MULT_POTIONS = new Set(Item.get([
  * @return Amount that will be created by your character
  */
 function numCrafted(item) {
-    if (kolmafia.myClass() === Class.get('Sauceror') && SAUCE_MULT_POTIONS.has(item)) {
+    if (kolmafia.myClass() === kolmafia.Class.get('Sauceror') && SAUCE_MULT_POTIONS.has(item)) {
         return 3;
     }
     return 1;
@@ -1302,7 +1302,7 @@ CleanupPlanner.prototype.makePlan = function makePlan (cleanupRules, stockingRul
                         plan.untinker.set(doodad, excess);
                         break;
                     case 'USE':
-                        if (kolmafia.myPath() === 'Bees Hate You' && doodad.name.includes('b'))
+                        if (kolmafia.myPath().name === 'Bees Hate You' && doodad.name.includes('b'))
                             { break; }
                         plan.use.set(doodad, excess);
                         break;
@@ -1386,7 +1386,7 @@ function isWadable(it) {
     // twinkly powder to sleaze nuggets
     if (1438 <= kolmafia.toInt(it) && kolmafia.toInt(it) <= 1449)
         { return true; }
-    return Item.get([
+    return kolmafia.Item.get([
         'sewer nuggets',
         'floaty sand',
         'floaty pebbles',
@@ -1403,17 +1403,17 @@ function isWadable(it) {
 function getMalusOrder(it) {
     switch (it) {
         // Process nuggets after powders
-        case Item.get('twinkly nuggets'):
-        case Item.get('hot nuggets'):
-        case Item.get('cold nuggets'):
-        case Item.get('spooky nuggets'):
-        case Item.get('stench nuggets'):
-        case Item.get('sleaze nuggets'):
+        case kolmafia.Item.get('twinkly nuggets'):
+        case kolmafia.Item.get('hot nuggets'):
+        case kolmafia.Item.get('cold nuggets'):
+        case kolmafia.Item.get('spooky nuggets'):
+        case kolmafia.Item.get('stench nuggets'):
+        case kolmafia.Item.get('sleaze nuggets'):
             return 2;
         // Process floaty sand -> floaty pebbles -> floaty gravel
-        case Item.get('floaty pebbles'):
+        case kolmafia.Item.get('floaty pebbles'):
             return 2;
-        case Item.get('floaty gravel'):
+        case kolmafia.Item.get('floaty gravel'):
             return 3;
         // Non-malusable items (includes equipment that can be Pulverized)
         default:
@@ -1508,18 +1508,18 @@ function sendToPulverizingBot(cleanupRules, stockingRules, simulateOnly) {
         // Smashbot supports fine-grained malus control through the "goose_level"
         // command.
         var ITEM_GOOSE_LEVELS = new Map([
-            [Item.get('twinkly powder'), 1],
-            [Item.get('hot powder'), 2],
-            [Item.get('cold powder'), 4],
-            [Item.get('spooky powder'), 8],
-            [Item.get('stench powder'), 16],
-            [Item.get('sleaze powder'), 32],
-            [Item.get('twinkly nuggets'), 64],
-            [Item.get('hot nuggets'), 128],
-            [Item.get('cold nuggets'), 256],
-            [Item.get('spooky nuggets'), 512],
-            [Item.get('stench nuggets'), 1024],
-            [Item.get('sleaze nuggets'), 2048] ]);
+            [kolmafia.Item.get('twinkly powder'), 1],
+            [kolmafia.Item.get('hot powder'), 2],
+            [kolmafia.Item.get('cold powder'), 4],
+            [kolmafia.Item.get('spooky powder'), 8],
+            [kolmafia.Item.get('stench powder'), 16],
+            [kolmafia.Item.get('sleaze powder'), 32],
+            [kolmafia.Item.get('twinkly nuggets'), 64],
+            [kolmafia.Item.get('hot nuggets'), 128],
+            [kolmafia.Item.get('cold nuggets'), 256],
+            [kolmafia.Item.get('spooky nuggets'), 512],
+            [kolmafia.Item.get('stench nuggets'), 1024],
+            [kolmafia.Item.get('sleaze nuggets'), 2048] ]);
         var totalGooseLevel = 0;
         for (var [it$1, gooseLevel] of ITEM_GOOSE_LEVELS) {
             if (itemsToSend.has(it$1)) {
@@ -1534,21 +1534,21 @@ function sendToPulverizingBot(cleanupRules, stockingRules, simulateOnly) {
         // behavior (no "rock") would satisfy our requirements.
         var canUseRock = false;
         var shouldWarnRerun = false;
-        if (itemsToSend.has(Item.get('floaty sand')) &&
-            ((_a = cleanupRules.get(Item.get('floaty pebbles'))) === null || _a === void 0 ? void 0 : _a.action) === 'PULV') {
+        if (itemsToSend.has(kolmafia.Item.get('floaty sand')) &&
+            ((_a = cleanupRules.get(kolmafia.Item.get('floaty pebbles'))) === null || _a === void 0 ? void 0 : _a.action) === 'PULV') {
             // Default behavior:
             //  sand -> pebbles (stop)
             // With "rock":
             //  sand -> pebbles -> gravel -> rock
-            if (((_b = cleanupRules.get(Item.get('floaty gravel'))) === null || _b === void 0 ? void 0 : _b.action) === 'PULV') {
+            if (((_b = cleanupRules.get(kolmafia.Item.get('floaty gravel'))) === null || _b === void 0 ? void 0 : _b.action) === 'PULV') {
                 canUseRock = true;
             }
             else {
                 shouldWarnRerun = true;
             }
         }
-        else if (itemsToSend.has(Item.get('floaty pebbles')) &&
-            ((_c = cleanupRules.get(Item.get('floaty gravel'))) === null || _c === void 0 ? void 0 : _c.action) === 'PULV') {
+        else if (itemsToSend.has(kolmafia.Item.get('floaty pebbles')) &&
+            ((_c = cleanupRules.get(kolmafia.Item.get('floaty gravel'))) === null || _c === void 0 ? void 0 : _c.action) === 'PULV') {
             // Default behavior:
             //  pebbles -> gravel (stop)
             // With "rock":
@@ -1581,12 +1581,12 @@ function sendToPulverizingBot(cleanupRules, stockingRules, simulateOnly) {
 function isPulverizable(it) {
     switch (it) {
         // Workaround for some items incorrectly marked as Pulverizable
-        case Item.get('Eight Days a Week Pill Keeper'):
-        case Item.get('Powerful Glove'):
-        case Item.get('Guzzlr tablet'):
-        case Item.get('Iunion Crown'):
-        case Item.get('Cargo Cultist Shorts'):
-        case Item.get('unwrapped knock-off retro superhero cape'):
+        case kolmafia.Item.get('Eight Days a Week Pill Keeper'):
+        case kolmafia.Item.get('Powerful Glove'):
+        case kolmafia.Item.get('Guzzlr tablet'):
+        case kolmafia.Item.get('Iunion Crown'):
+        case kolmafia.Item.get('Cargo Cultist Shorts'):
+        case kolmafia.Item.get('unwrapped knock-off retro superhero cape'):
             return true;
     }
     return Object.keys(kolmafia.getRelated(it, 'pulverize')).length > 0;
@@ -1598,7 +1598,7 @@ var cleanupPulverize = (plan, config) => {
     // TODO: When running a simulation, the results are often incorrect because
     // Philter does not predict the powders/nuggets/wads produced by each step.
     // We should print a warning about this.
-    if (!kolmafia.haveSkill(Skill.get('Pulverize'))) {
+    if (!kolmafia.haveSkill(kolmafia.Skill.get('Pulverize'))) {
         return {
             shouldReplan: sendToPulverizingBot(plan.cleanupRules, plan.stockingRules, config.simulateOnly),
             profit: 0,
@@ -1620,8 +1620,8 @@ var cleanupPulverize = (plan, config) => {
     pulverize(itemsToSmash, config.simulateOnly);
     var shouldReplan = itemsToSmash.size > 0;
     // Malus all items, including those gained from pulverizing.
-    if (kolmafia.haveSkill(Skill.get('Pulverize')) &&
-        kolmafia.myPrimestat() === Stat.get('muscle')) {
+    if (kolmafia.haveSkill(kolmafia.Skill.get('Pulverize')) &&
+        kolmafia.myPrimestat() === kolmafia.Stat.get('muscle')) {
         if (malus(plan.cleanupRules, plan.stockingRules, config.simulateOnly)) {
             shouldReplan = true;
         }
@@ -1703,15 +1703,15 @@ function useWithSetup(item, required) {
  * @return Whether the item was used successfully
  */
 function useItemForCleanup(item, amount) {
-    if (item === Item.get("the Slug Lord's map")) {
+    if (item === kolmafia.Item.get("the Slug Lord's map")) {
         return withOutfitCheckpoint(() => {
             ok(kolmafia.cliExecute('maximize stench resistance, 1 min'));
             return kolmafia.use(amount, item);
         });
     }
-    if (item === Item.get("Dr. Hobo's map")) {
+    if (item === kolmafia.Item.get("Dr. Hobo's map")) {
         equal(amount, 1, ("Cannot use " + amount + " of " + item + ", must use 1"));
-        var whip = Item.get([
+        var whip = kolmafia.Item.get([
             'Bar whip',
             'Bat whip',
             'Clown whip',
@@ -1727,18 +1727,18 @@ function useItemForCleanup(item, amount) {
             "Tail o' nine cats",
             'White whip',
             'Wumpus-hair whip',
-            'Yak whip' ]).find(it => kolmafia.itemAmount(it) && kolmafia.canEquip(it)) || Item.get('cool whip');
-        ok(kolmafia.retrieveItem(1, Item.get('asparagus knife')));
+            'Yak whip' ]).find(it => kolmafia.itemAmount(it) && kolmafia.canEquip(it)) || kolmafia.Item.get('cool whip');
+        ok(kolmafia.retrieveItem(1, kolmafia.Item.get('asparagus knife')));
         return useWithSetup(item, whip);
     }
-    if (item === Item.get("Dolphin King's map")) {
+    if (item === kolmafia.Item.get("Dolphin King's map")) {
         equal(amount, 1, ("Cannot use " + amount + " of " + item + ", must use 1"));
-        var breather = Item.get(['aerated diving helmet', 'makeshift SCUBA gear']).find(it => kolmafia.itemAmount(it) && kolmafia.canEquip(it)) || Item.get('snorkel');
+        var breather = kolmafia.Item.get(['aerated diving helmet', 'makeshift SCUBA gear']).find(it => kolmafia.itemAmount(it) && kolmafia.canEquip(it)) || kolmafia.Item.get('snorkel');
         return useWithSetup(item, breather);
     }
-    if (item === Item.get('Degrassi Knoll shopping list')) {
+    if (item === kolmafia.Item.get('Degrassi Knoll shopping list')) {
         equal(amount, 1, ("Cannot use " + amount + " of " + item + ", must use 1"));
-        if (kolmafia.itemAmount(Item.get("bitchin' meatcar")) === 0)
+        if (kolmafia.itemAmount(kolmafia.Item.get("bitchin' meatcar")) === 0)
             { return false; }
         // continue
     }
@@ -1759,8 +1759,8 @@ var cleanupUseItems = (plan, config) => cleanupSimple({
     shouldReplan: true,
 });
 
-var TEN_LEAF_CLOVER = Item.get('ten-leaf clover');
-var DISASSEMBLED_CLOVER = Item.get('disassembled clover');
+var TEN_LEAF_CLOVER = kolmafia.Item.get('ten-leaf clover');
+var DISASSEMBLED_CLOVER = kolmafia.Item.get('disassembled clover');
 // This is only called if the player has both kinds of clovers, so no need to check if stock contains both
 function cloversNeeded(stockingRules) {
     var _a, _b;
@@ -1821,7 +1821,7 @@ function stock(stockingRules, cleanupRules) {
         }
         // Closet everything (except for gear) that is stocked so it won't get accidentally used.
         var keepAmount = ((_a = cleanupRules.get(item)) === null || _a === void 0 ? void 0 : _a.keepAmount) || 0;
-        if (kolmafia.toSlot(item) === Slot.get('none') &&
+        if (kolmafia.toSlot(item) === kolmafia.Slot.get('none') &&
             stockingRule.amount - keepAmount > kolmafia.closetAmount(item) &&
             kolmafia.itemAmount(item) > keepAmount) {
             kolmafia.putCloset(Math.min(kolmafia.itemAmount(item) - keepAmount, stockingRule.amount - keepAmount - kolmafia.closetAmount(item)), item);
