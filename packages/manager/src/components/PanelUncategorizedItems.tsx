@@ -98,14 +98,17 @@ export const PanelUncategorizedItems = ({
     }, false)
   );
 
-  useEffect(
-    () => setErrorToast('savingError', savingError, 'Cannot save cleanup rule'),
-    [savingError]
-  );
-  useEffect(
-    () => setSavingToast('isSaving', isSaving, 'Saving cleanup rules...'),
-    [isSaving]
-  );
+  useEffect(() => {
+    (async () => {
+      await setErrorToast('savingError', savingError, 'Cannot save config');
+    })();
+  }, [savingError]);
+
+  useEffect(() => {
+    (async () => {
+      await setSavingToast('isSaving', isSaving, 'Saving config...');
+    })();
+  }, [isSaving]);
 
   const setAllItemsToMall = useCallback(
     () =>

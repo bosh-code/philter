@@ -204,18 +204,23 @@ export const PanelConfig = () => {
 
   const isDisabled = !baseConfig || !config || isSaving;
 
-  useEffect(
-    () => setErrorToast('loadingError', loadingError, 'Cannot load config'),
-    [loadingError]
-  );
-  useEffect(
-    () => setErrorToast('savingError', savingError, 'Cannot save config'),
-    [savingError]
-  );
-  useEffect(
-    () => setSavingToast('isSaving', isSaving, 'Saving config...'),
-    [isSaving]
-  );
+  useEffect(() => {
+    (async () => {
+      await setErrorToast('loadingError', loadingError, 'Cannot load config');
+    })();
+  }, [loadingError]);
+
+  useEffect(() => {
+    (async () => {
+      await setErrorToast('savingError', savingError, 'Cannot save config');
+    })();
+  }, [savingError]);
+
+  useEffect(() => {
+    (async () => {
+      await setSavingToast('isSaving', isSaving, 'Saving config...');
+    })();
+  }, [isSaving]);
 
   const isMallMultiInputDisabled = isDisabled || !config?.canUseMallMulti;
   return (

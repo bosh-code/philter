@@ -2,12 +2,9 @@
  * @file Provides methods for toast-based notifications.
  */
 
-import {Toaster} from '@blueprintjs/core';
+import { OverlayToaster } from "@blueprintjs/core";
 import React from 'react';
 import {ApiError} from './api';
-
-/** Globally shared `<Toaster>` instance for displaying notifications. */
-export const toaster = Toaster.create({maxToasts: 1});
 
 /**
  * Render `error` as a toast message.
@@ -16,11 +13,12 @@ export const toaster = Toaster.create({maxToasts: 1});
  * @param errorMessage Message to show
  * @param key Used to uniquely identify the toast message
  */
-export const setErrorToast = (
+export const setErrorToast = async (
   key: string,
   error: unknown,
   errorMessage: string
-): void => {
+): Promise<void> => {
+  const toaster = await OverlayToaster.create({maxToasts: 1});
   if (error) {
     toaster.show(
       {
@@ -48,7 +46,9 @@ export const setErrorToast = (
  * Display an informational toast message.
  * @param message Message to show
  */
-export const showInfoToast = (message: string): void => {
+export const showInfoToast = async (message: string): Promise<void> => {
+  const toaster = await OverlayToaster.create({maxToasts: 1});
+
   toaster.show({icon: 'info-sign', message});
 };
 
@@ -58,11 +58,13 @@ export const showInfoToast = (message: string): void => {
  * @param isSaving Whether to show or hide the toast
  * @param message Message to show
  */
-export const setSavingToast = (
+export const setSavingToast = async (
   key: string,
   isSaving: boolean,
   message: string
-): void => {
+): Promise<void> => {
+  const toaster = await OverlayToaster.create({maxToasts: 1});
+
   if (isSaving) {
     toaster.show({icon: 'floppy-disk', intent: 'primary', message}, key);
   } else {

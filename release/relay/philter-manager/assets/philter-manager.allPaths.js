@@ -1,2 +1,2 @@
-import{I as n}from"./philter-manager.index2.js";import{I as e}from"./philter-manager.index3.js";import{p as r,I as s}from"./philter-manager.index.js";function I(o,t){var a=r(o);return t===s.STANDARD?n[a]:e[a]}function p(o){return r(o)}export{n as IconSvgPaths16,e as IconSvgPaths20,I as getIconPaths,p as iconNameToPathsRecordKey};
+import{I as s}from"./philter-manager.index2.js";import{I as r}from"./philter-manager.index3.js";import{p as n,I as c}from"./philter-manager.index.js";function p(t,a){const o=n(t);return a===c.STANDARD?s[o]:r[o]}export{s as IconSvgPaths16,r as IconSvgPaths20,p as getIconPaths};
 //# sourceMappingURL=philter-manager.allPaths.js.map
