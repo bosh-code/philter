@@ -5,7 +5,8 @@
   "compilerOptions": {
     // Override setting set by GTS's tsconfig to make @rollup/plugin-typescript
     // happy
-    "declaration": false
+    "declaration": false,
+    "sourceMap": false
   },
   "files": ["rollup.config.ts"],
   "references": [{"path": "../common"}]

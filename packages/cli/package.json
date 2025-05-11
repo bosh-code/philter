@@ -7,7 +7,7 @@
   "author": "Yehyoung Kang",
   "main": "index.js",
   "scripts": {
-    "build": "rollup --configPlugin typescript -c rollup.config.ts",
+    "build": "rollup -c rollup.config.mjs",
     "lint": "eslint src && prettier --check .",
     "format": "eslint src --fix && prettier --write .",
     "madge": "madge --circular . ./src/index.ts",

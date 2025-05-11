@@ -3,13 +3,13 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "build": "tsc && vite build",
+    "build": "tsc && vite build && rimraf --glob \"dist/**/index.html\"",
     "dev": "vite",
     "lint": "eslint src && prettier --check .",
     "format": "eslint src --fix && prettier --write .",
     "madge": "madge --circular . ./src/index.ts",
     "pre-commit": "lint-staged",
-    "serve": "vite preview"
+    "preview": "vite preview"
   },
   "dependencies": {
     "@blueprintjs/core": "^6.0.0-alpha.1",
@@ -32,7 +32,7 @@
     "@types/react-virtualized": "^9.22.2",
     "@typescript-eslint/eslint-plugin": "^8.32.0",
     "@typescript-eslint/parser": "^8.32.0",
-    "@vitejs/plugin-react-refresh": "^1.3.6",
+    "@vitejs/plugin-react": "^4.3.1",
     "eslint": "^9.26.0",
     "eslint-plugin-react": "^7.37.5",
     "eslint-plugin-react-compiler": "latest",
@@ -44,7 +44,7 @@
     "madge": "^8.0.0",
     "patch-package": "^8.0.0",
     "prettier": "^3.5.3",
-    "vite": "^6.3.5"
+    "vite": "^5.4.2"
   },
   "proxy": "http://localhost:60080"
 }

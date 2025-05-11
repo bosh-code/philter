@@ -151,6 +151,52 @@ function checkProjectUpdates() {
 }
 
 /**
+ * Checks if an item can be cleaned up by Philter.
+ *
+ * Generally, this rejects most items that cannot be put in the display case
+ * (e.g. quest items). However, several items that Philter knows how to handle
+ * are exempt from this rule.
+ * @param item Item to check
+ * @return Whether the item can be cleaned up by Philter
+ */
+function isCleanable(it) {
+    // For some reason Item.get("none") is displayable
+    if (it === kolmafia.Item.get('none'))
+        { return false; }
+    if (kolmafia.Item.get([
+        "Boris's key",
+        "Jarlsberg's key",
+        "Richard's star key",
+        "Sneaky Pete's key",
+        'digital key',
+        "the Slug Lord's map",
+        "Dr. Hobo's map",
+        "Dolphin King's map",
+        'Degrassi Knoll shopping list',
+        '31337 scroll',
+        'dead mimic',
+        "fisherman's sack",
+        'fish-oil smoke bomb',
+        'vial of squid ink',
+        'potion of fishy speed',
+        'blessed large box' ]).includes(it)) {
+        return true;
+    }
+    // Let these hide in your inventory until it is time for them to strike!
+    // TODO: Revisit how this is handled.
+    // Since a player can have multiple DNOTC boxes from different years, and we
+    // don't know the associated year of a DNOTC box, our best bet is to try
+    // opening them all.
+    if (it === kolmafia.Item.get('DNOTC Box')) {
+        var today = kolmafia.todayToString();
+        if (today.slice(4, 6) === '12' && Number(today.slice(6, 8)) < 25) {
+            return false;
+        }
+    }
+    return kolmafia.isDisplayable(it);
+}
+
+/**
  * Factory function for functions that parse a text file into a Map using
  * KoLmafia's file I/O API.
  * Any comments and empty lines in the text file are ignored.
@@ -292,52 +338,6 @@ function saveCleanupRulesetFile(filepath, cleanupRulesMap) {
     })
         .join('\n');
     return kolmafia.bufferToFile(buffer, filepath);
-}
-
-/**
- * Checks if an item can be cleaned up by Philter.
- *
- * Generally, this rejects most items that cannot be put in the display case
- * (e.g. quest items). However, several items that Philter knows how to handle
- * are exempt from this rule.
- * @param item Item to check
- * @return Whether the item can be cleaned up by Philter
- */
-function isCleanable(it) {
-    // For some reason Item.get("none") is displayable
-    if (it === kolmafia.Item.get('none'))
-        { return false; }
-    if (kolmafia.Item.get([
-        "Boris's key",
-        "Jarlsberg's key",
-        "Richard's star key",
-        "Sneaky Pete's key",
-        'digital key',
-        "the Slug Lord's map",
-        "Dr. Hobo's map",
-        "Dolphin King's map",
-        'Degrassi Knoll shopping list',
-        '31337 scroll',
-        'dead mimic',
-        "fisherman's sack",
-        'fish-oil smoke bomb',
-        'vial of squid ink',
-        'potion of fishy speed',
-        'blessed large box' ]).includes(it)) {
-        return true;
-    }
-    // Let these hide in your inventory until it is time for them to strike!
-    // TODO: Revisit how this is handled.
-    // Since a player can have multiple DNOTC boxes from different years, and we
-    // don't know the associated year of a DNOTC box, our best bet is to try
-    // opening them all.
-    if (it === kolmafia.Item.get('DNOTC Box')) {
-        var today = kolmafia.todayToString();
-        if (today.slice(4, 6) === '12' && Number(today.slice(6, 8)) < 25) {
-            return false;
-        }
-    }
-    return kolmafia.isDisplayable(it);
 }
 
 /**
@@ -1531,7 +1531,7 @@ function main() {
         // Interestingly, KoLmafia will still return a response if the script aborts
         // or throws after calling send(). Unfortunately, the stack trace is all but
         // lost at this point, so there's little point in re-throwing the exception.
-        error(("[" + safeScriptPath + "] " + (e instanceof Error ? e : '[ERROR] ' + e)));
+        error(("[" + safeScriptPath + "] " + (e instanceof Error ? e : ("[ERROR] " + e))));
     }
     var endTime = kolmafia.gametimeToInt();
     var clfDate = formatDateClf(new Date());

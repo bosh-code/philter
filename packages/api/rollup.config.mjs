@@ -32,26 +32,23 @@
  * better native ESM support.
  */
 
-/* eslint-disable node/no-unpublished-import */
 import buble from '@rollup/plugin-buble';
-import {nodeResolve} from '@rollup/plugin-node-resolve';
+import { nodeResolve } from '@rollup/plugin-node-resolve';
 import typescript from '@rollup/plugin-typescript';
 import createPreset from 'buble-config-rhino';
-import type {RollupOptions} from 'rollup';
 import copy from 'rollup-plugin-copy';
 // Import @philter/common using a relative path. This is a hack, btw.
 // File extension is required to make this work in Node.js v12 AND v14.
-// eslint-disable-next-line node/no-missing-import
-import {RELAY_SCRIPT_FILE} from '../common/build/src/index.js';
+import { RELAY_SCRIPT_FILE } from '../common/build/src/index.js';
 
-const config: RollupOptions = {
+const config = {
   external: ['kolmafia', 'philter.util.ash', 'zlib.ash'],
   input: 'src/index.ts',
   output: {
     // To take advantage of TypeScript's incremental build mode, we must allow
     // Rollup to emit to a build directory, then copy the bundled script
     dir: 'build',
-    format: 'cjs',
+    format: 'cjs'
   },
   plugins: [
     nodeResolve(),
@@ -60,7 +57,7 @@ const config: RollupOptions = {
       declaration: false,
       // Don't generate source maps (Rhino doesn't support them anyway)
       sourceMap: false,
-      tsconfig: 'src/tsconfig.json',
+      tsconfig: 'src/tsconfig.json'
     }),
     buble(createPreset()),
     copy({
@@ -69,14 +66,14 @@ const config: RollupOptions = {
         {
           src: 'build/index.js',
           dest: '../../release/relay',
-          rename: RELAY_SCRIPT_FILE,
-        },
-      ],
-    }),
+          rename: RELAY_SCRIPT_FILE
+        }
+      ]
+    })
   ],
   treeshake: {
-    moduleSideEffects: id => id !== 'philter.util.ash',
-  },
+    moduleSideEffects: (id) => id !== 'philter.util.ash'
+  }
 };
 
 export default config;

@@ -41,6 +41,52 @@ function checkProjectUpdates() {
 }
 
 /**
+ * Checks if an item can be cleaned up by Philter.
+ *
+ * Generally, this rejects most items that cannot be put in the display case
+ * (e.g. quest items). However, several items that Philter knows how to handle
+ * are exempt from this rule.
+ * @param item Item to check
+ * @return Whether the item can be cleaned up by Philter
+ */
+function isCleanable(it) {
+    // For some reason Item.get("none") is displayable
+    if (it === kolmafia.Item.get('none'))
+        { return false; }
+    if (kolmafia.Item.get([
+        "Boris's key",
+        "Jarlsberg's key",
+        "Richard's star key",
+        "Sneaky Pete's key",
+        'digital key',
+        "the Slug Lord's map",
+        "Dr. Hobo's map",
+        "Dolphin King's map",
+        'Degrassi Knoll shopping list',
+        '31337 scroll',
+        'dead mimic',
+        "fisherman's sack",
+        'fish-oil smoke bomb',
+        'vial of squid ink',
+        'potion of fishy speed',
+        'blessed large box' ]).includes(it)) {
+        return true;
+    }
+    // Let these hide in your inventory until it is time for them to strike!
+    // TODO: Revisit how this is handled.
+    // Since a player can have multiple DNOTC boxes from different years, and we
+    // don't know the associated year of a DNOTC box, our best bet is to try
+    // opening them all.
+    if (it === kolmafia.Item.get('DNOTC Box')) {
+        var today = kolmafia.todayToString();
+        if (today.slice(4, 6) === '12' && Number(today.slice(6, 8)) < 25) {
+            return false;
+        }
+    }
+    return kolmafia.isDisplayable(it);
+}
+
+/**
  * Object whose keys are string values that make up the `CleanupAction` type.
  * Also used to check at runtime if a string belongs to `CleanupAction`.
  * The values are unused; they can be anything.
@@ -161,52 +207,6 @@ var loadCleanupRulesetFile = createMapLoader((ref, _, filename) => {
     }
     return [kolmafia.toItem(itemName), rule];
 });
-
-/**
- * Checks if an item can be cleaned up by Philter.
- *
- * Generally, this rejects most items that cannot be put in the display case
- * (e.g. quest items). However, several items that Philter knows how to handle
- * are exempt from this rule.
- * @param item Item to check
- * @return Whether the item can be cleaned up by Philter
- */
-function isCleanable(it) {
-    // For some reason Item.get("none") is displayable
-    if (it === kolmafia.Item.get('none'))
-        { return false; }
-    if (kolmafia.Item.get([
-        "Boris's key",
-        "Jarlsberg's key",
-        "Richard's star key",
-        "Sneaky Pete's key",
-        'digital key',
-        "the Slug Lord's map",
-        "Dr. Hobo's map",
-        "Dolphin King's map",
-        'Degrassi Knoll shopping list',
-        '31337 scroll',
-        'dead mimic',
-        "fisherman's sack",
-        'fish-oil smoke bomb',
-        'vial of squid ink',
-        'potion of fishy speed',
-        'blessed large box' ]).includes(it)) {
-        return true;
-    }
-    // Let these hide in your inventory until it is time for them to strike!
-    // TODO: Revisit how this is handled.
-    // Since a player can have multiple DNOTC boxes from different years, and we
-    // don't know the associated year of a DNOTC box, our best bet is to try
-    // opening them all.
-    if (it === kolmafia.Item.get('DNOTC Box')) {
-        var today = kolmafia.todayToString();
-        if (today.slice(4, 6) === '12' && Number(today.slice(6, 8)) < 25) {
-            return false;
-        }
-    }
-    return kolmafia.isDisplayable(it);
-}
 
 /**
  * @file Tools for loading and manipulating Philter configuration.
@@ -672,8 +672,7 @@ function countIngredientRecurse(source, target, underConsideration) {
             // Recursively count how many `source` is needed to make
             // each `ingredient`
             underConsideration.add(ingredient);
-            total +=
-                qty * countIngredientRecurse(source, ingredient, underConsideration);
+            total += qty * countIngredientRecurse(source, ingredient, underConsideration);
             underConsideration.delete(ingredient);
         }
     }
@@ -715,9 +714,7 @@ function fullAmount(it) {
         // Include Closet
         (!kolmafia.toBoolean(kolmafia.getProperty('autoSatisfyWithCloset')) ? kolmafia.closetAmount(it) : 0) +
         // Include Hangk's Storage
-        (!kolmafia.toBoolean(kolmafia.getProperty('autoSatisfyWithStorage')) || !kolmafia.canInteract()
-            ? kolmafia.storageAmount(it)
-            : 0) -
+        (!kolmafia.toBoolean(kolmafia.getProperty('autoSatisfyWithStorage')) || !kolmafia.canInteract() ? kolmafia.storageAmount(it) : 0) -
         // Don't include Clan Stash
         (kolmafia.toBoolean(kolmafia.getProperty('autoSatisfyWithStash')) ? kolmafia.stashAmount(it) : 0));
 }
@@ -794,9 +791,7 @@ function cleanupSimple(ref) {
         var messages = [];
         for (var [item, data] of chunk) {
             var amount = typeof data === 'number' ? data : data.amount;
-            var itemSuffix = commandItemSuffix
-                ? (" " + (commandItemSuffix(item, data)))
-                : '';
+            var itemSuffix = commandItemSuffix ? (" " + (commandItemSuffix(item, data))) : '';
             messages.push((amount + " " + item + itemSuffix));
         }
         info((commandPrefix + " " + (messages.join(', '))));
@@ -825,8 +820,8 @@ function cleanupBatchExecute(ref) {
         items: items,
         config: config,
         commandPrefix: commandPrefix,
-        process: items => safeBatchItems(items, process, onBatchError),
-        shouldReplan: valueOnSuccess,
+        process: (items) => safeBatchItems(items, process, onBatchError),
+        shouldReplan: valueOnSuccess
     });
 }
 /**
@@ -880,11 +875,11 @@ var cleanupAutosell = (plan, config) => {
         { return { shouldReplan: false, profit: 0 }; }
     var profit = printAutosell(items);
     if (!config.simulateOnly) {
-        safeBatchItems(items, chunk => {
+        safeBatchItems(items, (chunk) => {
             for (var [item, amount] of chunk) {
                 ok(kolmafia.autosell(amount, item), ("Failed to batch: autosell(" + amount + ", Item.get(`" + item + "`))"));
             }
-        }, chunk => fail(("Failed to autosell " + (chunk.size) + " item(s)")));
+        }, (chunk) => fail(("Failed to autosell " + (chunk.size) + " item(s)")));
     }
     return { shouldReplan: false, profit: profit };
 };
@@ -896,7 +891,7 @@ var cleanupBreakApart = (plan, config) => cleanupSimple({
     items: plan.breakBricko,
     config: config,
     commandPrefix: 'break apart',
-    process: chunk => {
+    process: (chunk) => {
         for (var [item, amount] of chunk) {
             for (var i = 0; i < amount; ++i) {
                 // TODO: Check response text to verify if item was broken apart
@@ -904,7 +899,7 @@ var cleanupBreakApart = (plan, config) => cleanupSimple({
             }
         }
     },
-    shouldReplan: true,
+    shouldReplan: true
 });
 
 /**
@@ -914,13 +909,13 @@ var cleanupMoveToCloset = (plan, config) => cleanupBatchExecute({
     items: plan.closet,
     config: config,
     commandPrefix: 'closet',
-    process: chunk => {
+    process: (chunk) => {
         for (var [item, amount] of chunk) {
             ok(kolmafia.putCloset(amount, item), ("Failed to batch: putCloset(" + amount + ", Item.get(`" + item + "`))"));
         }
     },
-    onBatchError: chunk => fail(("Failed to put " + (chunk.size) + " item(s) in closet")),
-    shouldReplan: false,
+    onBatchError: (chunk) => fail(("Failed to put " + (chunk.size) + " item(s) in closet")),
+    shouldReplan: false
 });
 
 /**
@@ -930,7 +925,7 @@ var cleanupDiscard = (plan, config) => cleanupSimple({
     items: plan.discard,
     config: config,
     commandPrefix: 'discard',
-    process: items => {
+    process: (items) => {
         for (var [item, amount] of items) {
             for (var i = 0; i < amount; ++i) {
                 kolmafia.print(("Discarding " + amount + " of " + (item.name) + "..."));
@@ -939,7 +934,7 @@ var cleanupDiscard = (plan, config) => cleanupSimple({
             }
         }
     },
-    shouldReplan: false,
+    shouldReplan: false
 });
 
 /**
@@ -949,13 +944,13 @@ var cleanupMoveToDisplayCase = (plan, config) => cleanupBatchExecute({
     items: plan.displayCase,
     config: config,
     commandPrefix: 'display',
-    process: chunk => {
+    process: (chunk) => {
         for (var [item, amount] of chunk) {
             ok(kolmafia.putDisplay(amount, item), ("Failed to batch: putDisplay(" + amount + ", Item.get(`" + item + "`))"));
         }
     },
-    onBatchError: chunk => fail(("Failed to put " + (chunk.size) + " item(s) in display case")),
-    shouldReplan: false,
+    onBatchError: (chunk) => fail(("Failed to put " + (chunk.size) + " item(s) in display case")),
+    shouldReplan: false
 });
 
 // TODO: Extract GIFT rule at planning stage rather than action stage
@@ -981,16 +976,16 @@ var cleanupSendGifts = (plan, config) => {
             items: items,
             config: config,
             commandPrefix: ("send gift to " + recipent + ":"),
-            process: items => {
+            process: (items) => {
                 var giftRule = getRepresentativeGiftRule(items.keys(), plan.cleanupRules);
                 sendToPlayer({
                     recipent: giftRule.recipent,
                     message: giftRule.message,
                     items: items,
-                    insideNote: giftRule.message,
+                    insideNote: giftRule.message
                 });
             },
-            shouldReplan: false,
+            shouldReplan: false
         });
         shouldReplan || (shouldReplan = result.shouldReplan);
         profit += result.profit;
@@ -1036,7 +1031,8 @@ var SAUCE_MULT_POTIONS = new Set(kolmafia.Item.get([
     'peach lozenge',
     'cologne of contempt',
     'potion of temporary gr8ness',
-    'blackberry polite' ]));
+    'blackberry polite'
+]));
 /**
  * Returns the number of `item` that is crafted by your character per craft.
  * This returns 3 for Sauceror potions (only if you are a Sauceror).
@@ -1066,12 +1062,12 @@ var cleanupMakeItems = (plan, config) => cleanupSimple({
     config: config,
     commandPrefix: 'transform',
     commandItemSuffix: (item, data) => ("into " + (data.targetItem)),
-    process: items => {
+    process: (items) => {
         for (var [item, data] of items) {
             makeItemForCleanup(item, data.targetItem, data.amount, data.amountUsedPerCraft);
         }
     },
-    shouldReplan: true,
+    shouldReplan: true
 });
 
 function shouldUseMulti(config) {
@@ -1087,15 +1083,11 @@ function shouldUseMulti(config) {
  *		The returned price is guaranteed to be at least 0.
  */
 function salePrice(it, minPrice) {
-    var price = kolmafia.historicalAge(it) < 1 && kolmafia.historicalPrice(it) > 0
-        ? kolmafia.historicalPrice(it)
-        : kolmafia.mallPrice(it);
+    var price = kolmafia.historicalAge(it) < 1 && kolmafia.historicalPrice(it) > 0 ? kolmafia.historicalPrice(it) : kolmafia.mallPrice(it);
     return Math.max(minPrice, price, 0);
 }
 function printMallAndMakePriceCache(items, cleanupRules, config) {
-    var com = shouldUseMulti(config)
-        ? ("send to mallmulti '" + (config.mallMultiName) + "': ")
-        : 'mallsell ';
+    var com = shouldUseMulti(config) ? ("send to mallmulti '" + (config.mallMultiName) + "': ") : 'mallsell ';
     var finalSale = 0;
     var priceCache = new Map();
     for (var chunk of splitItemsSorted(items, 11)) {
@@ -1157,7 +1149,7 @@ function sendToMallMulti(items, mallMultiName, message) {
         sendToPlayer({
             recipent: mallMultiName,
             message: message,
-            items: items,
+            items: items
         });
     }
 }
@@ -1176,13 +1168,13 @@ var cleanupMallsell = (plan, config) => {
             sendToMallMulti(items, config.mallMultiName, config.mallMultiKmailMessage);
         }
         else {
-            safeBatchItems(items, chunk => {
+            safeBatchItems(items, (chunk) => {
                 for (var [item, amount] of chunk) {
                     var cachedPrice = priceCache.get(item);
                     ok(cachedPrice !== undefined, ("Price for " + item + " is not cached"));
                     ok(kolmafia.putShop(cachedPrice, 0, amount, item), ("Failed to batch: putShop(" + cachedPrice + ", 0, " + amount + ", Item.get(`" + item + "`))"));
                 }
-            }, chunk => fail(("Failed to put " + (chunk.size) + " item(s) in shop")));
+            }, (chunk) => fail(("Failed to put " + (chunk.size) + " item(s) in shop")));
         }
     }
     return { shouldReplan: false, profit: profit };
@@ -1210,10 +1202,7 @@ function cleanupAmount(item, cleanupRule, stockingRule) {
     // by closet.
     var keep = zlib_ash.getvar('BaleOCD_Stock') === '0'
         ? keepAmount
-        : Math.max(keepAmount, ((stockingRule === null || stockingRule === void 0 ? void 0 : stockingRule.amount) || 0) -
-            (kolmafia.getProperty('autoSatisfyWithCloset') === 'false'
-                ? 0
-                : kolmafia.closetAmount(item)));
+        : Math.max(keepAmount, ((stockingRule === null || stockingRule === void 0 ? void 0 : stockingRule.amount) || 0) - (kolmafia.getProperty('autoSatisfyWithCloset') === 'false' ? 0 : kolmafia.closetAmount(item)));
     // Philter is limited by itemAmount(it) since we don't want to purchase
     // anything and closeted items may be off-limit, but if there's something in
     // the closet, it counts against the amount you own.
@@ -1265,7 +1254,7 @@ CleanupPlanner.prototype.makePlan = function makePlan (cleanupRules, stockingRul
         reminder: new Map(),
         gift: new Map(),
         cleanupRules: cleanupRules,
-        stockingRules: stockingRules,
+        stockingRules: stockingRules
     };
     for (var doodad of toItemMap(kolmafia.getInventory()).keys()) {
         var rule = cleanupRules.get(doodad);
@@ -1290,20 +1279,22 @@ CleanupPlanner.prototype.makePlan = function makePlan (cleanupRules, stockingRul
                         if (rule.shouldUseCreatableOnly) {
                             amountToUse = Math.min(amountToUse, kolmafia.creatableAmount(targetItem) * amountUsedPerCraft);
                         }
-                        if (amountToUse !== 0)
-                            { plan.make.set(doodad, {
+                        if (amountToUse !== 0) {
+                            plan.make.set(doodad, {
                                 amount: amountToUse,
                                 amountUsedPerCraft: amountUsedPerCraft,
-                                targetItem: targetItem,
-                            }); }
+                                targetItem: targetItem
+                            });
+                        }
                         break;
                     }
                     case 'UNTN':
                         plan.untinker.set(doodad, excess);
                         break;
                     case 'USE':
-                        if (kolmafia.myPath().name === 'Bees Hate You' && doodad.name.includes('b'))
-                            { break; }
+                        if (kolmafia.myPath().name === 'Bees Hate You' && doodad.name.includes('b')) {
+                            break;
+                        }
                         plan.use.set(doodad, excess);
                         break;
                     case 'PULV':
@@ -1354,8 +1345,9 @@ CleanupPlanner.prototype.makePlan = function makePlan (cleanupRules, stockingRul
             if (this.checkStopForRelay(doodad, stockingRules))
                 { return null; }
             // Potentially disasterous, but this will cause the script to sell off unlisted items, just like it used to.
-            if (kolmafia.toBoolean(zlib_ash.getvar('BaleOCD_MallDangerously')))
-                { plan.mallsell.set(doodad, excess); } // Backwards compatibility FTW!
+            if (kolmafia.toBoolean(zlib_ash.getvar('BaleOCD_MallDangerously'))) {
+                plan.mallsell.set(doodad, excess);
+            } // Backwards compatibility FTW!
         }
     }
     return plan;
@@ -1386,11 +1378,7 @@ function isWadable(it) {
     // twinkly powder to sleaze nuggets
     if (1438 <= kolmafia.toInt(it) && kolmafia.toInt(it) <= 1449)
         { return true; }
-    return kolmafia.Item.get([
-        'sewer nuggets',
-        'floaty sand',
-        'floaty pebbles',
-        'floaty gravel' ]).includes(it);
+    return kolmafia.Item.get(['sewer nuggets', 'floaty sand', 'floaty pebbles', 'floaty gravel']).includes(it);
 }
 /**
  * Returns the "Malus order" of items.
@@ -1519,7 +1507,8 @@ function sendToPulverizingBot(cleanupRules, stockingRules, simulateOnly) {
             [kolmafia.Item.get('cold nuggets'), 256],
             [kolmafia.Item.get('spooky nuggets'), 512],
             [kolmafia.Item.get('stench nuggets'), 1024],
-            [kolmafia.Item.get('sleaze nuggets'), 2048] ]);
+            [kolmafia.Item.get('sleaze nuggets'), 2048]
+        ]);
         var totalGooseLevel = 0;
         for (var [it$1, gooseLevel] of ITEM_GOOSE_LEVELS) {
             if (itemsToSend.has(it$1)) {
@@ -1534,8 +1523,7 @@ function sendToPulverizingBot(cleanupRules, stockingRules, simulateOnly) {
         // behavior (no "rock") would satisfy our requirements.
         var canUseRock = false;
         var shouldWarnRerun = false;
-        if (itemsToSend.has(kolmafia.Item.get('floaty sand')) &&
-            ((_a = cleanupRules.get(kolmafia.Item.get('floaty pebbles'))) === null || _a === void 0 ? void 0 : _a.action) === 'PULV') {
+        if (itemsToSend.has(kolmafia.Item.get('floaty sand')) && ((_a = cleanupRules.get(kolmafia.Item.get('floaty pebbles'))) === null || _a === void 0 ? void 0 : _a.action) === 'PULV') {
             // Default behavior:
             //  sand -> pebbles (stop)
             // With "rock":
@@ -1601,7 +1589,7 @@ var cleanupPulverize = (plan, config) => {
     if (!kolmafia.haveSkill(kolmafia.Skill.get('Pulverize'))) {
         return {
             shouldReplan: sendToPulverizingBot(plan.cleanupRules, plan.stockingRules, config.simulateOnly),
-            profit: 0,
+            profit: 0
         };
     }
     // Process all pulverizable items first, so that we can malus the
@@ -1620,8 +1608,7 @@ var cleanupPulverize = (plan, config) => {
     pulverize(itemsToSmash, config.simulateOnly);
     var shouldReplan = itemsToSmash.size > 0;
     // Malus all items, including those gained from pulverizing.
-    if (kolmafia.haveSkill(kolmafia.Skill.get('Pulverize')) &&
-        kolmafia.myPrimestat() === kolmafia.Stat.get('muscle')) {
+    if (kolmafia.haveSkill(kolmafia.Skill.get('Pulverize')) && kolmafia.myPrimestat() === kolmafia.Stat.get('muscle')) {
         if (malus(plan.cleanupRules, plan.stockingRules, config.simulateOnly)) {
             shouldReplan = true;
         }
@@ -1641,13 +1628,13 @@ var cleanupMoveToClanStash = (plan, config) => cleanupBatchExecute({
     items: plan.clanStash,
     config: config,
     commandPrefix: 'stash put',
-    process: chunk => {
+    process: (chunk) => {
         for (var [item, amount] of chunk) {
             ok(kolmafia.putStash(amount, item), ("Failed to batch: putStash(" + amount + ", Item.get(`" + item + "`))"));
         }
     },
-    onBatchError: chunk => fail(("Failed to put " + (chunk.size) + " item(s) in clan stash")),
-    shouldReplan: false,
+    onBatchError: (chunk) => fail(("Failed to put " + (chunk.size) + " item(s) in clan stash")),
+    shouldReplan: false
 });
 
 /**
@@ -1676,12 +1663,12 @@ var cleanupUntinker = (plan, config) => cleanupSimple({
     items: plan.untinker,
     config: config,
     commandPrefix: 'untinker',
-    process: items => {
+    process: (items) => {
         for (var [item, amount] of items) {
             ok(kolmafia.cliExecute(("untinker " + amount + " ¶" + (kolmafia.toInt(item)))), ("Failed to untinker " + amount + " of " + item));
         }
     },
-    shouldReplan: true,
+    shouldReplan: true
 });
 
 /**
@@ -1727,13 +1714,15 @@ function useItemForCleanup(item, amount) {
             "Tail o' nine cats",
             'White whip',
             'Wumpus-hair whip',
-            'Yak whip' ]).find(it => kolmafia.itemAmount(it) && kolmafia.canEquip(it)) || kolmafia.Item.get('cool whip');
+            'Yak whip'
+        ]).find((it) => kolmafia.itemAmount(it) && kolmafia.canEquip(it)) || kolmafia.Item.get('cool whip');
         ok(kolmafia.retrieveItem(1, kolmafia.Item.get('asparagus knife')));
         return useWithSetup(item, whip);
     }
     if (item === kolmafia.Item.get("Dolphin King's map")) {
         equal(amount, 1, ("Cannot use " + amount + " of " + item + ", must use 1"));
-        var breather = kolmafia.Item.get(['aerated diving helmet', 'makeshift SCUBA gear']).find(it => kolmafia.itemAmount(it) && kolmafia.canEquip(it)) || kolmafia.Item.get('snorkel');
+        var breather = kolmafia.Item.get(['aerated diving helmet', 'makeshift SCUBA gear']).find((it) => kolmafia.itemAmount(it) && kolmafia.canEquip(it)) ||
+            kolmafia.Item.get('snorkel');
         return useWithSetup(item, breather);
     }
     if (item === kolmafia.Item.get('Degrassi Knoll shopping list')) {
@@ -1751,12 +1740,12 @@ var cleanupUseItems = (plan, config) => cleanupSimple({
     items: plan.use,
     config: config,
     commandPrefix: 'use',
-    process: items => {
+    process: (items) => {
         for (var [item, amount] of items) {
             ok(useItemForCleanup(item, amount), ("Failed to use " + amount + " of " + item));
         }
     },
-    shouldReplan: true,
+    shouldReplan: true
 });
 
 var TEN_LEAF_CLOVER = kolmafia.Item.get('ten-leaf clover');
@@ -1803,8 +1792,7 @@ function stock(stockingRules, cleanupRules) {
     kolmafia.batchOpen();
     for (var [item, stockingRule] of stockingRules) {
         // Someone might want both assembled and disassembled clovers. Esure there are enough of combined tot
-        if ((TEN_LEAF_CLOVER === item || DISASSEMBLED_CLOVER === item) &&
-            stockingRules.has(otherClover(item))) {
+        if ((TEN_LEAF_CLOVER === item || DISASSEMBLED_CLOVER === item) && stockingRules.has(otherClover(item))) {
             var cloversNeededAmount = cloversNeeded(stockingRules);
             if (cloversNeededAmount > 0) {
                 // TODO: This seems suspicious, it might be acquiring less clovers than
@@ -1812,12 +1800,9 @@ function stock(stockingRules, cleanupRules) {
                 ok(kolmafia.cliExecute(("cheapest ten-leaf clover, disassembled clover; acquire " + (cloversNeededAmount - kolmafia.availableAmount(item)) + " it")), 'Failed to stock up on clovers');
             }
         }
-        if (fullAmount(item) < stockingRule.amount &&
-            !stocker.stockit(stockingRule.amount, item)) {
+        if (fullAmount(item) < stockingRule.amount && !stocker.stockit(stockingRule.amount, item)) {
             success = false;
-            error(("Failed to stock " + (stockingRule.amount > 1
-                ? ((stockingRule.amount) + " " + (item.plural))
-                : ("a " + item))));
+            error(("Failed to stock " + (stockingRule.amount > 1 ? ((stockingRule.amount) + " " + (item.plural)) : ("a " + item))));
         }
         // Closet everything (except for gear) that is stocked so it won't get accidentally used.
         var keepAmount = ((_a = cleanupRules.get(item)) === null || _a === void 0 ? void 0 : _a.keepAmount) || 0;
@@ -1843,8 +1828,7 @@ function stock(stockingRules, cleanupRules) {
 function loadCurrentCleanupRules(dataFileName) {
     // TODO: Hopefully, nobody is using `OCD_<name>_Data.txt`.
     // Maybe we could remove it altogether
-    var cleanupRules = loadCleanupRulesetFile(dataFileName) ||
-        loadCleanupRulesetFile(("OCD_" + (kolmafia.myName()) + "_Data.txt"));
+    var cleanupRules = loadCleanupRulesetFile(dataFileName) || loadCleanupRulesetFile(("OCD_" + (kolmafia.myName()) + "_Data.txt"));
     ok(cleanupRules, ("Failed to load cleanup rules from file \"" + dataFileName + "\""));
     isAbove(cleanupRules.size, 0, ("Failed to load cleanup rules, file \"" + dataFileName + "\" is empty or missing"));
     return cleanupRules;
@@ -1875,17 +1859,20 @@ function doPhilter(config) {
         cleanupMoveToDisplayCase,
         cleanupMoveToCloset,
         cleanupMoveToClanStash,
-        cleanupSendGifts ];
+        cleanupSendGifts
+    ];
     var plan = planner.makePlan(cleanupRules, stockingRules);
-    if (!plan)
-        { return { success: false, finalSale: finalSale }; }
+    if (!plan) {
+        return { success: false, finalSale: finalSale };
+    }
     for (var actionFunc of actions) {
         var result = actionFunc(plan, config);
         finalSale += result.profit;
         if (result.shouldReplan) {
             plan = planner.makePlan(cleanupRules, stockingRules);
-            if (!plan)
-                { return { success: false, finalSale: finalSale }; }
+            if (!plan) {
+                return { success: false, finalSale: finalSale };
+            }
         }
     }
     if (zlib_ash.getvar('BaleOCD_Stock') === '1' && !config.simulateOnly) {
@@ -1919,7 +1906,7 @@ function philter(config) {
     return withProperties({
         autoSatisfyWithCloset: 'false',
         autoSatisfyWithStash: 'false',
-        autoSatisfyWithStorage: 'false',
+        autoSatisfyWithStorage: 'false'
     }, () => {
         var ref = doPhilter(config);
         var success = ref.success;
@@ -1961,8 +1948,9 @@ function main() {
     if (meatGain < 0) {
         error('Philter was unable to cleanse your inventory.');
     }
-    else if (meatGain === 0)
-        { warn('Nothing to do. I foresee no additional meat in your future.'); }
+    else if (meatGain === 0) {
+        warn('Nothing to do. I foresee no additional meat in your future.');
+    }
     else {
         success(("Anticipated monetary gain from inventory cleansing: " + (zlib_ash.rnum(meatGain)) + " meat."));
     }
