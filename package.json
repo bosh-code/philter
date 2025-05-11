@@ -9,11 +9,7 @@
     "build:cli": "yarn workspace @philter/common build && yarn workspace @philter/cli build",
     "build:e2e": "yarn workspace @philter/common build && yarn workspace @philter/e2e-tests build",
     "build:manager": "yarn workspace @philter/common build && yarn workspace @philter/api build && yarn workspace @philter/manager build",
-    "lint": "eslint .",
-    "postinstall": "patch-package"
-  },
-  "devDependencies": {
-    "postinstall-postinstall": "^2.1.0"
+    "lint": "eslint ."
   },
   "packageManager": "yarn@3.6.4",
   "eslintConfig": {
