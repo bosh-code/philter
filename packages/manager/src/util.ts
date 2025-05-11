@@ -8,7 +8,7 @@ import {CleanupAction, ItemInfo} from '@philter/common';
  * Maximum possible mallsell price for any item.
  * This is a limit enforced by KoL.
  */
-export const MAX_MALL_PRICE = 999_999_999 as const;
+export const MAX_MALL_PRICE = 999_999_999_999 as const;
 
 /**
  * Zero-width space character. This can be used to allow browsers to break long

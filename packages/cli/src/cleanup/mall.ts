@@ -65,7 +65,7 @@ function printMallAndMakePriceCache(
 
       if (!shouldUseMulti(config)) {
         // If mall pricing mode is 'max', make putShop() use existing price or
-        // mall max price (999,999,999 meat)
+        // mall max price (999,999,999,999 meat)
         let price = 0;
         if (config.mallPricingMode === 'auto') {
           price = salePrice(item, rule ? rule.minPrice : 0);
