@@ -10,7 +10,8 @@ import {
   Intent,
   UL,
 } from '@blueprintjs/core';
-import {Classes as Popover2Classes, Popover2} from '@blueprintjs/popover2';
+import {Popover} from '@blueprintjs/core';
+
 import {
   CleanupRule,
   CleanupRuleset,
@@ -608,9 +609,9 @@ export const TableItemCleanup = memo(function TableItemCleanup({
           onClick={onReset}
           text="Discard changes"
         />
-        <Popover2
+        <Popover
           className="TableItemCleanup__PopperFix"
-          popoverClassName={Popover2Classes.POPOVER2_CONTENT_SIZING}
+          popoverClassName={Classes.POPOVER_CONTENT_SIZING}
           content={
             <p>
               Select an action for each item. These actions will tell Philter
@@ -642,7 +643,7 @@ export const TableItemCleanup = memo(function TableItemCleanup({
           }
         >
           <Button icon="help" text="Help" />
-        </Popover2>
+        </Popover>
       </ButtonGroup>
     ),
     [disableReset, disableSave, onReset, onSave]

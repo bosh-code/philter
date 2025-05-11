@@ -6,7 +6,6 @@ Note: Don't add @bluprintjs/icons since we don't use icon fonts.
 */
 @import 'normalize.css';
 @import '@blueprintjs/core';
-@import '@blueprintjs/popover2';
 
 #root {
   display: flex;

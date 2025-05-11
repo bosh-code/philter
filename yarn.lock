@@ -295,24 +295,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@blueprintjs/popover2@npm:^2.1.31":
-  version: 2.1.31
-  resolution: "@blueprintjs/popover2@npm:2.1.31"
-  dependencies:
-    "@blueprintjs/core": ^5.19.0
-    classnames: ^2.3.1
-    tslib: ~2.6.2
-  peerDependencies:
-    "@types/react": ^16.14.41 || 17 || 18
-    react: ^16.8 || 17 || 18
-    react-dom: ^16.8 || 17 || 18
-  peerDependenciesMeta:
-    "@types/react":
-      optional: true
-  checksum: 34e960324f9d9a2484dd9bd1f60649772d9ba9b2cc4c80feeb5c25a444a96961ff8024daeb2c797ed07d45fe349ac771e5851c1785b93f7797cf3a7daa7f674e
-  languageName: node
-  linkType: hard
-
 "@esbuild/aix-ppc64@npm:0.25.4":
   version: 0.25.4
   resolution: "@esbuild/aix-ppc64@npm:0.25.4"
@@ -781,7 +763,6 @@ __metadata:
   resolution: "@philter/manager@workspace:packages/manager"
   dependencies:
     "@blueprintjs/core": ^5.19.0
-    "@blueprintjs/popover2": ^2.1.31
     "@philter/common": "*"
     "@types/react": ^19.1.3
     "@types/react-dom": ^19.1.3
