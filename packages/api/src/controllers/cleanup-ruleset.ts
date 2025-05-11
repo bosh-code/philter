@@ -8,7 +8,7 @@ import {
   loadCleanupRulesetFile,
   saveCleanupRulesetFile,
 } from '@philter/common/kol';
-import {myName} from 'kolmafia';
+import {myName, type Item} from 'kolmafia';
 import {getvar} from 'zlib.ash';
 import {getFullDataFileName} from './philter-config';
 

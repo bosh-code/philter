@@ -107,7 +107,7 @@ const isOneOf = <T extends unknown>(
   compareWith: readonly T[]
 ): value is T => compareWith.includes(value as T);
 
-export const PanelConfig = (): JSX.Element => {
+export const PanelConfig = () => {
   const {
     data: baseConfig,
     error: loadingError,
@@ -382,7 +382,7 @@ export const PanelConfig = (): JSX.Element => {
             fileNamePrefix={CLEANUP_RULESET_PREFIX}
             fileNameSuffix={TXT_SUFFIX}
             onChange={useCallback(
-              ({target: {value}}) =>
+              ({target: {value}}: {target: {value: any}}) =>
                 setConfigSafe(config => ({...config, dataFileName: value})),
               [setConfigSafe]
             )}
@@ -404,7 +404,7 @@ export const PanelConfig = (): JSX.Element => {
             fileNamePrefix={STOCKING_RULESET_PREFIX}
             fileNameSuffix={TXT_SUFFIX}
             onChange={useCallback(
-              ({target: {value}}) =>
+              ({target: {value}}: {target: {value: any}}) =>
                 setConfigSafe(config => ({...config, stockFileName: value})),
               [setConfigSafe]
             )}

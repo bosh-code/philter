@@ -8,6 +8,7 @@ import {
   loadStockingRulesetFile,
   saveStockingRulesetFile,
 } from '@philter/common/kol';
+import { Item } from 'kolmafia';
 import {getvar} from 'zlib.ash';
 import {getFullStockFileName} from './philter-config';
 

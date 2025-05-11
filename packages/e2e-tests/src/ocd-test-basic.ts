@@ -11,11 +11,11 @@ import {toItemMap} from '@philter/common/kol';
 import {
   bufferToFile,
   cliExecute,
-  getInventory,
+  getInventory, Item,
   print,
   printHtml,
-  toInt,
-} from 'kolmafia';
+  toInt
+} from "kolmafia";
 import {assert} from 'kolmafia-util';
 import minimist from 'minimist';
 import {parseArgsStringToArgv} from 'string-argv';
@@ -153,7 +153,7 @@ function teardown(testCases: Iterable<CleanupActionTest>): void {
       testCase.teardown?.();
     } catch (e) {
       error(`Teardown failed: Test case ${testCase.name} for ${testCase.item}`);
-      error(e);
+      error(e as string);
     }
   }
 }

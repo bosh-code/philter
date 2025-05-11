@@ -2,7 +2,7 @@
  * @file General-purpose utilities for KoLmafia scripts.
  */
 
-import {toInt} from 'kolmafia';
+import {Item, toInt} from 'kolmafia';
 
 const _MONTH_STR = [
   'Jan',

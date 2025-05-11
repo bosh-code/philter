@@ -12,14 +12,14 @@ import {
   creatableAmount,
   getInventory,
   getProperty,
-  haveDisplay,
+  haveDisplay, Item,
   itemAmount,
   myPath,
   retrieveItem,
   toBoolean,
   toItem,
-  userConfirm,
-} from 'kolmafia';
+  userConfirm
+} from "kolmafia";
 import {getvar} from 'zlib.ash';
 import {countIngredient, fullAmount} from './util';
 
@@ -215,7 +215,7 @@ export class CleanupPlanner {
               plan.untinker.set(doodad, excess);
               break;
             case 'USE':
-              if (myPath() === 'Bees Hate You' && doodad.name.includes('b'))
+              if (myPath().name === 'Bees Hate You' && doodad.name.includes('b'))
                 break;
               plan.use.set(doodad, excess);
               break;

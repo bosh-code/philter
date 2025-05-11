@@ -1,11 +1,11 @@
 import {
   canEquip,
   cliExecute,
-  equip,
+  equip, Item,
   itemAmount,
   retrieveItem,
-  use,
-} from 'kolmafia';
+  use
+} from "kolmafia";
 import {assert, withOutfitCheckpoint} from 'kolmafia-util';
 import {CleanupActionFunction, cleanupSimple} from './base';
 

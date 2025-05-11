@@ -2,7 +2,7 @@
  * @file Tools for manipulating cleanup ruleset files.
  */
 
-import {bufferToFile, toBoolean, toInt, toItem} from 'kolmafia';
+import { bufferToFile, Item, toBoolean, toInt, toItem } from "kolmafia";
 import {CleanupRule, isCleanupAction} from '../data/cleanup-rule.js';
 import {createMapLoader, encodeItem} from './util.js';
 

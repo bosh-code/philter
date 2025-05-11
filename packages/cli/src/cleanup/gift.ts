@@ -1,6 +1,7 @@
 import {ReadonlyCleanupRules} from '@philter/common/kol';
 import {assert, sendToPlayer} from 'kolmafia-util';
 import {CleanupActionFunction, cleanupSimple} from './base';
+import { Item } from "kolmafia";
 
 // TODO: Extract GIFT rule at planning stage rather than action stage
 // Which will obviate this function

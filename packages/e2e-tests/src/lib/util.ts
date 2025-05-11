@@ -8,11 +8,11 @@ import {
   getCloset,
   getInventory,
   getShop,
-  getStash,
+  getStash, Item,
   print,
   visitUrl,
-  xpath,
-} from 'kolmafia';
+  xpath
+} from "kolmafia";
 import {assert} from 'kolmafia-util';
 
 /**

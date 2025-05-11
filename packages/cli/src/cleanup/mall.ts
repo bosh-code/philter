@@ -2,12 +2,12 @@ import {PhilterConfig} from '@philter/common';
 import {logger, ReadonlyCleanupRules} from '@philter/common/kol';
 import {
   historicalAge,
-  historicalPrice,
+  historicalPrice, Item,
   mallPrice,
   print,
   putShop,
-  userConfirm,
-} from 'kolmafia';
+  userConfirm
+} from "kolmafia";
 import {assert, sendToPlayer} from 'kolmafia-util';
 import {rnum} from 'zlib.ash';
 import {splitItemsSorted} from '../util';

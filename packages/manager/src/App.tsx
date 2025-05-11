@@ -28,7 +28,7 @@ const ensureValidTabType = (tabId: number | string): MainTabType =>
     ? (tabId as MainTabType)
     : DEFAULT_TAB;
 
-export const App = (): JSX.Element => {
+export const App = () => {
   const [tabId, setTabId] = useState<MainTabType>(DEFAULT_TAB);
 
   // Global edit state persisted across categorized and uncategorized item tabs

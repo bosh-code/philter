@@ -36,7 +36,7 @@ export const PanelUncategorizedItems = ({
   onChange: (
     newStateOrReducer: React.SetStateAction<ReadonlyCleanupRuleset | undefined>
   ) => void;
-}): JSX.Element => {
+}) => {
   // Major assumptions:
   //
   // - data.items contains _only_ items that are uncategorized, i.e. the server

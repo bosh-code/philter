@@ -9,10 +9,10 @@ import {
   getRelated,
   haveSkill,
   isOnline,
-  isTradeable,
-  myPrimestat,
-  toInt,
-} from 'kolmafia';
+  isTradeable, Item,
+  myPrimestat, Skill, Stat,
+  toInt
+} from "kolmafia";
 import {assert, kmail} from 'kolmafia-util';
 import {cleanupAmount} from '../planner';
 import {splitItemsSorted} from '../util';

@@ -18,7 +18,7 @@ const BULLET = <span className="PanelInformation__Bullet">&#8943;</span>;
  * Panel that acts as the "home page", and displays general information about
  * the player's cleanup rules.
  */
-export const PanelInformation = (): JSX.Element => {
+export const PanelInformation = () => {
   const {
     data,
     isValidating: isLoading,
@@ -71,7 +71,6 @@ export const PanelInformation = (): JSX.Element => {
           <HTMLTable
             bordered
             className="PanelInformation__VerticalTable"
-            condensed
           >
             <tbody>
               <tr>

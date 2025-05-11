@@ -29,7 +29,7 @@ export const CleanupRulePicker = ({
     newRuleOrReducer: React.SetStateAction<CleanupRule | null>
   ) => void;
   rule: Readonly<CleanupRule> | null;
-}): JSX.Element => {
+}) => {
   const handleActionChange = useCallback(
     (action: CleanupActionOrUnknown) => {
       if (!onChange) return;

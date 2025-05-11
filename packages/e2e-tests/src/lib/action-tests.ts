@@ -14,12 +14,12 @@ import {
   haveDisplay,
   haveShop,
   haveSkill,
-  isGiftable,
+  isGiftable, Item,
   itemAmount,
   knollAvailable,
   print,
-  retrieveItem,
-} from 'kolmafia';
+  retrieveItem, Skill
+} from "kolmafia";
 import {assert} from 'kolmafia-util';
 import {getvar} from 'zlib.ash';
 import {error, InventoryState, loadOutboxKmail} from './util';

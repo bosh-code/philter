@@ -14,6 +14,7 @@ import {
   isGiftable,
   toInt,
   toItem,
+  Item
 } from 'kolmafia';
 
 const BREAKABLE_ITEMS = Item.get([

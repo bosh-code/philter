@@ -1,6 +1,6 @@
 import {PhilterConfig} from '@philter/common';
 import {logger} from '@philter/common/kol';
-import {batchClose, batchOpen, itemAmount} from 'kolmafia';
+import { batchClose, batchOpen, Item, itemAmount } from "kolmafia";
 import {assert} from 'kolmafia-util';
 import {CleanupPlan} from '../planner';
 import {grouper, splitItemsSorted} from '../util';

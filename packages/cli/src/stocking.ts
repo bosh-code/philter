@@ -9,13 +9,13 @@ import {
   batchOpen,
   cliExecute,
   closetAmount,
-  equippedAmount,
+  equippedAmount, Item,
   itemAmount,
   putCloset,
-  retrieveItem,
+  retrieveItem, Slot,
   storageAmount,
-  toSlot,
-} from 'kolmafia';
+  toSlot
+} from "kolmafia";
 import {assert} from 'kolmafia-util';
 import {fullAmount} from './util';
 

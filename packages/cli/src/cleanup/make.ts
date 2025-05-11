@@ -1,4 +1,4 @@
-import {create, myClass} from 'kolmafia';
+import { Class, create, Item, myClass } from "kolmafia";
 import {CleanupActionFunction, cleanupSimple} from './base';
 
 const SAUCE_MULT_POTIONS: ReadonlySet<Item> = new Set(

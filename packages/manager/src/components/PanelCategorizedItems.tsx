@@ -128,7 +128,7 @@ export const PanelCategorizedItems = ({
   onChange: (
     newStateOrReducer: React.SetStateAction<ReadonlyCleanupRuleset | undefined>
   ) => void;
-}): JSX.Element => {
+}) => {
   const {
     data,
     error: loadingError,

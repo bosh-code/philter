@@ -10,6 +10,7 @@ import {
   getInventory,
   getStorage,
   haveDisplay,
+  Item
 } from 'kolmafia';
 import {itemMapToIdMapping} from '../util';
 

@@ -1,5 +1,5 @@
 import {logger} from '@philter/common/kol';
-import {autosell, autosellPrice} from 'kolmafia';
+import {autosell, autosellPrice, Item} from 'kolmafia';
 import {assert} from 'kolmafia-util';
 import {rnum} from 'zlib.ash';
 import {splitItemsSorted} from '../util';

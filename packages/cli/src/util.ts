@@ -6,12 +6,12 @@ import {
   equippedAmount,
   getCampground,
   getIngredients,
-  getProperty,
+  getProperty, Item,
   itemAmount,
   stashAmount,
   storageAmount,
-  toBoolean,
-} from 'kolmafia';
+  toBoolean
+} from "kolmafia";
 
 function countIngredientRecurse(
   source: Item,
