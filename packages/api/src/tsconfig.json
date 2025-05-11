@@ -24,7 +24,7 @@
     "moduleResolution": "node",
     "outDir": "../build",
     "paths": {
-      "zlib.ash": ["../../../node_modules/kolmafia/contrib/zlib.ash"]
+      "zlib.ash": ["../../../node_modules/kolmafia-types/contrib/zlib.ash.d.ts"]
     },
     "rootDir": ".",
     // Don't generate source maps (Rhino doesn't support them anyway)

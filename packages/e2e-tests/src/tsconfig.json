@@ -24,7 +24,7 @@
     "module": "ES2015",
     "moduleResolution": "node",
     "paths": {
-      "zlib.ash": ["../../node_modules/kolmafia/contrib/zlib.ash"]
+      "zlib.ash": ["../../node_modules/kolmafia-types/contrib/zlib.ash.d.ts"]
     },
     "rootDir": ".",
     // Rely on Bublé to transpile the output to Rhino-compatible ES5+

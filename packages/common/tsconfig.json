@@ -1,5 +1,5 @@
 {
-  "extends": "../../node_modules/gts/tsconfig-google.json",
+  "extends": "gts/tsconfig-google.json",
   "compilerOptions": {
     "composite": true,
     // JavaScript APIs supported by Rhino 1.7.13
@@ -23,7 +23,7 @@
     "newLine": "LF",
     "outDir": "build",
     "paths": {
-      "zlib.ash": ["../../node_modules/kolmafia/contrib/zlib.ash.d.ts"]
+      "zlib.ash": ["../../node_modules/kolmafia-types/contrib/zlib.ash.d.ts"]
     },
     "rootDir": ".",
     // Downstream packages should use transpilers to transpile our output to
@@ -31,7 +31,6 @@
     "target": "ES2018",
     // Don't include any @types/* packages, which may otherwise pull in unwanted
     // libs (e.g. "lib.es2017.object.d.ts")
-    "types": []
-  },
-  "include": ["src"]
+    "types": ["kolmafia-types"]
+  }
 }

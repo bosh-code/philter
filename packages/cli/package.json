@@ -14,7 +14,7 @@
   },
   "dependencies": {
     "@philter/common": "*",
-    "kolmafia": "npm:kolmafia-types",
+    "kolmafia": "^5.28389.0",
     "kolmafia-util": "^0.3.0"
   },
   "devDependencies": {

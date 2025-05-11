@@ -25,7 +25,8 @@
     "test": "yarn run build && yarn run lint"
   },
   "dependencies": {
-    "kolmafia": "npm:kolmafia-types"
+    "kolmafia": "^5.28389.0",
+    "kolmafia-types": "0.3.0"
   },
   "devDependencies": {
     "gts": "^3.1.0",
