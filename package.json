@@ -1,5 +1,5 @@
 {
-  "name": "philter",
+  "name": "@philter/root",
   "private": true,
   "workspaces": [
     "packages/*"

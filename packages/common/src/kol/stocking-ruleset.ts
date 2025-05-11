@@ -2,8 +2,10 @@
  * @file Tools for manipulating stocking ruleset files.
  */
 
-import {bufferToFile, toInt, toItem, type Item} from 'kolmafia';
+import {bufferToFile, type Item,toInt, toItem} from 'kolmafia';
+
 import {StockingRule} from '../data/stocking-rule.js';
+
 import {createMapLoader, encodeItem} from './util.js';
 
 /**

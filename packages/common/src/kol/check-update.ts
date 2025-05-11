@@ -5,6 +5,7 @@ import {
   svnAtHead,
   svnExists,
 } from 'kolmafia';
+
 import * as logger from './logger.js';
 
 export function checkProjectUpdates(): void {

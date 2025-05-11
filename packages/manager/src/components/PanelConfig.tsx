@@ -1,3 +1,5 @@
+import React, {memo, useCallback, useEffect, useState} from 'react';
+import {useAsyncCallback} from 'react-async-hook';
 import {
   Button,
   ButtonGroup,
@@ -12,16 +14,18 @@ import {
   Radio,
   RadioGroup,
 } from '@blueprintjs/core';
-import {CONFIG_ROUTE, PhilterConfig} from '@philter/common';
 import classNames from 'classnames';
 import {dequal} from 'dequal/lite';
-import React, {memo, useCallback, useEffect, useState} from 'react';
-import {useAsyncCallback} from 'react-async-hook';
 import useSWR from 'swr';
+
+import {CONFIG_ROUTE, PhilterConfig} from '@philter/common';
+
 import {fetchGetPhilterConfig, fetchSavePhilterConfig} from '../api';
 import {setErrorToast, setSavingToast} from '../toaster';
 import {MAX_MALL_PRICE, ZWSP} from '../util';
+
 import {InputGroupAffixedFileName} from './InputGroupAffixedFileName';
+
 import './PanelConfig.css';
 
 const CLEANUP_RULESET_PREFIX = 'OCDdata_';

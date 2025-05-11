@@ -2,14 +2,16 @@
  * @file Tools for managing `StockingRuleset` objects.
  */
 
+import { Item } from 'kolmafia';
+import {getvar} from 'zlib.ash';
+
 import {StockingRule} from '@philter/common';
 import {
   CONFIG_NAMES,
   loadStockingRulesetFile,
   saveStockingRulesetFile,
 } from '@philter/common/kol';
-import { Item } from 'kolmafia';
-import {getvar} from 'zlib.ash';
+
 import {getFullStockFileName} from './philter-config';
 
 /**

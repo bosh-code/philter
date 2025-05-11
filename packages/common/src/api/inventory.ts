@@ -3,6 +3,7 @@
  */
 
 import {InventoryState} from '../data/inventory-state.js';
+
 import {RequestBase, SuccessResponseBase} from './base.js';
 
 export const INVENTORY_ROUTE = '/inventory' as const;

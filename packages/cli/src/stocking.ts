@@ -1,23 +1,23 @@
 import {
-  logger,
-  ReadonlyCleanupRules,
-  ReadonlyStockingRules,
-} from '@philter/common/kol';
-import {
   availableAmount,
   batchClose,
   batchOpen,
   cliExecute,
   closetAmount,
-  equippedAmount, Item,
+  equippedAmount,
+  Item,
   itemAmount,
   putCloset,
-  retrieveItem, Slot,
+  retrieveItem,
+  Slot,
   storageAmount,
   toSlot
-} from "kolmafia";
-import {assert} from 'kolmafia-util';
-import {fullAmount} from './util';
+} from 'kolmafia';
+import { assert } from 'kolmafia-util';
+
+import { logger, ReadonlyCleanupRules, ReadonlyStockingRules } from '@philter/common/kol';
+
+import { fullAmount } from './util';
 
 const TEN_LEAF_CLOVER = Item.get('ten-leaf clover');
 const DISASSEMBLED_CLOVER = Item.get('disassembled clover');
@@ -61,45 +61,30 @@ class Stocker {
  * @param cleanupRules Cleanup ruleset to use
  * @return Whether all items were stocked successfully
  */
-export function stock(
-  stockingRules: ReadonlyStockingRules,
-  cleanupRules: ReadonlyCleanupRules
-): boolean {
+export function stock(stockingRules: ReadonlyStockingRules, cleanupRules: ReadonlyCleanupRules): boolean {
   let success = true;
   const stocker = new Stocker();
 
   batchOpen();
   for (const [item, stockingRule] of stockingRules) {
     // Someone might want both assembled and disassembled clovers. Esure there are enough of combined tot
-    if (
-      (TEN_LEAF_CLOVER === item || DISASSEMBLED_CLOVER === item) &&
-      stockingRules.has(otherClover(item))
-    ) {
+    if ((TEN_LEAF_CLOVER === item || DISASSEMBLED_CLOVER === item) && stockingRules.has(otherClover(item))) {
       const cloversNeededAmount = cloversNeeded(stockingRules);
       if (cloversNeededAmount > 0) {
         // TODO: This seems suspicious, it might be acquiring less clovers than
         // needed. Need to verify
         assert.ok(
           cliExecute(
-            `cheapest ten-leaf clover, disassembled clover; acquire ${
-              cloversNeededAmount - availableAmount(item)
-            } it`
+            `cheapest ten-leaf clover, disassembled clover; acquire ${cloversNeededAmount - availableAmount(item)} it`
           ),
           'Failed to stock up on clovers'
         );
       }
     }
-    if (
-      fullAmount(item) < stockingRule.amount &&
-      !stocker.stockit(stockingRule.amount, item)
-    ) {
+    if (fullAmount(item) < stockingRule.amount && !stocker.stockit(stockingRule.amount, item)) {
       success = false;
       logger.error(
-        `Failed to stock ${
-          stockingRule.amount > 1
-            ? `${stockingRule.amount} ${item.plural}`
-            : `a ${item}`
-        }`
+        `Failed to stock ${stockingRule.amount > 1 ? `${stockingRule.amount} ${item.plural}` : `a ${item}`}`
       );
     }
     // Closet everything (except for gear) that is stocked so it won't get accidentally used.
@@ -109,13 +94,7 @@ export function stock(
       stockingRule.amount - keepAmount > closetAmount(item) &&
       itemAmount(item) > keepAmount
     ) {
-      putCloset(
-        Math.min(
-          itemAmount(item) - keepAmount,
-          stockingRule.amount - keepAmount - closetAmount(item)
-        ),
-        item
-      );
+      putCloset(Math.min(itemAmount(item) - keepAmount, stockingRule.amount - keepAmount - closetAmount(item)), item);
     }
   }
 

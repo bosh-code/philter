@@ -1,9 +1,11 @@
-import {PhilterConfig} from '@philter/common';
-import {logger} from '@philter/common/kol';
-import { batchClose, batchOpen, Item, itemAmount } from "kolmafia";
-import {assert} from 'kolmafia-util';
-import {CleanupPlan} from '../planner';
-import {grouper, splitItemsSorted} from '../util';
+import { batchClose, batchOpen, Item, itemAmount } from 'kolmafia';
+import { assert } from 'kolmafia-util';
+
+import { PhilterConfig } from '@philter/common';
+import { logger } from '@philter/common/kol';
+
+import { CleanupPlan } from '../planner';
+import { grouper, splitItemsSorted } from '../util';
 
 /** Represents the outcome of a cleanup action function. */
 export interface CleanupActionResult {
@@ -27,7 +29,7 @@ export type CleanupActionFunction = (
 ) => CleanupActionResult;
 
 /** Item data format that can be accepted by `cleanupSimple()`. */
-type ItemData = number | {amount: number};
+type ItemData = number | { amount: number };
 
 interface CleanupExecuteOptions<T extends ItemData> {
   /**
@@ -73,15 +75,11 @@ export function cleanupSimple<T extends ItemData>({
   commandPrefix,
   commandItemSuffix,
   process,
-  shouldReplan,
+  shouldReplan
 }: CleanupExecuteOptions<T>): CleanupActionResult {
-  if (items.size === 0) return {shouldReplan: false, profit: 0};
+  if (items.size === 0) return { shouldReplan: false, profit: 0 };
 
-  const sortedItems = new Map(
-    Array.from(items).sort(([itemA], [itemB]) =>
-      itemA.name.localeCompare(itemB.name)
-    )
-  );
+  const sortedItems = new Map(Array.from(items).sort(([itemA], [itemB]) => itemA.name.localeCompare(itemB.name)));
 
   // TODO: Move this check to planning stage
   // (this should be checked only for the 'USE' action)
@@ -93,9 +91,7 @@ export function cleanupSimple<T extends ItemData>({
     const messages: string[] = [];
     for (const [item, data] of chunk) {
       const amount = typeof data === 'number' ? data : data.amount;
-      const itemSuffix = commandItemSuffix
-        ? ` ${commandItemSuffix(item, data)}`
-        : '';
+      const itemSuffix = commandItemSuffix ? ` ${commandItemSuffix(item, data)}` : '';
       messages.push(`${amount} ${item}${itemSuffix}`);
     }
     logger.info(`${commandPrefix} ${messages.join(', ')}`);
@@ -105,11 +101,10 @@ export function cleanupSimple<T extends ItemData>({
   if (!config.simulateOnly) {
     process(sortedItems);
   }
-  return {shouldReplan, profit: 0};
+  return { shouldReplan, profit: 0 };
 }
 
-interface CleanupBatchExecuteOptions
-  extends Omit<CleanupExecuteOptions<number>, 'process'> {
+interface CleanupBatchExecuteOptions extends Omit<CleanupExecuteOptions<number>, 'process'> {
   /**
    * Callback that processes a chunk of items. This will be called once for each
    * chunk. Each invocation of `process()` is preceded by `batchOpen()` and
@@ -133,14 +128,14 @@ export function cleanupBatchExecute({
   commandPrefix,
   process,
   onBatchError,
-  shouldReplan: valueOnSuccess,
+  shouldReplan: valueOnSuccess
 }: CleanupBatchExecuteOptions) {
   return cleanupSimple({
     items,
     config,
     commandPrefix,
-    process: items => safeBatchItems(items, process, onBatchError),
-    shouldReplan: valueOnSuccess,
+    process: (items) => safeBatchItems(items, process, onBatchError),
+    shouldReplan: valueOnSuccess
   });
 }
 
@@ -169,9 +164,7 @@ export function safeBatchItems<T>(
     if (!batchClose()) {
       onBatchError(chunk);
       // @ts-expect-error Fallback in case onBatchError() does not throw
-      assert.fail(
-        'batchClose() failed, but onBatchError() did not throw an exception'
-      );
+      assert.fail('batchClose() failed, but onBatchError() did not throw an exception');
     }
   }
 }

@@ -135,7 +135,7 @@ export type ResponseBase = SuccessResponseBase | ErrorResponseBase;
  * Each key must be a route string.
  * Each value must be a union of `RoutesEntry` interfaces.
  */
-// eslint-disable-next-line @typescript-eslint/no-empty-interface
+
 export interface Routes {}
 
 /**

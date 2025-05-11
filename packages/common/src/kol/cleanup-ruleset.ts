@@ -3,7 +3,9 @@
  */
 
 import { bufferToFile, Item, toBoolean, toInt, toItem } from "kolmafia";
+
 import {CleanupRule, isCleanupAction} from '../data/cleanup-rule.js';
+
 import {createMapLoader, encodeItem} from './util.js';
 
 /**

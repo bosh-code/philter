@@ -1,3 +1,5 @@
+import {formFields, gametimeToInt, myName, write} from 'kolmafia';
+
 import {
   ErrorResponseBase,
   RELAY_HTML_PATH,
@@ -8,7 +10,7 @@ import {
   logger,
   setDefaultConfig,
 } from '@philter/common/kol';
-import {formFields, gametimeToInt, myName, write} from 'kolmafia';
+
 import {routes} from './routes';
 import {createRouter} from './typed-router';
 import {formatDateClf} from './util';
@@ -103,7 +105,7 @@ export function main() {
     // or throws after calling send(). Unfortunately, the stack trace is all but
     // lost at this point, so there's little point in re-throwing the exception.
     logger.error(
-      `[${safeScriptPath}] ${e instanceof Error ? e : '[ERROR] ' + e}`
+      `[${safeScriptPath}] ${e instanceof Error ? e : `[ERROR] ${  e}`}`
     );
   }
 

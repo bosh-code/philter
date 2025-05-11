@@ -1,13 +1,7 @@
-import {
-  canEquip,
-  cliExecute,
-  equip, Item,
-  itemAmount,
-  retrieveItem,
-  use
-} from "kolmafia";
-import {assert, withOutfitCheckpoint} from 'kolmafia-util';
-import {CleanupActionFunction, cleanupSimple} from './base';
+import { canEquip, cliExecute, equip, Item, itemAmount, retrieveItem, use } from 'kolmafia';
+import { assert, withOutfitCheckpoint } from 'kolmafia-util';
+
+import { CleanupActionFunction, cleanupSimple } from './base';
 
 /**
  * Apply temporary setup while using the `item`.
@@ -55,8 +49,8 @@ function useItemForCleanup(item: Item, amount: number): boolean {
         "Tail o' nine cats",
         'White whip',
         'Wumpus-hair whip',
-        'Yak whip',
-      ]).find(it => itemAmount(it) && canEquip(it)) || Item.get('cool whip');
+        'Yak whip'
+      ]).find((it) => itemAmount(it) && canEquip(it)) || Item.get('cool whip');
     assert.ok(retrieveItem(1, Item.get('asparagus knife')));
     return useWithSetup(item, whip);
   }
@@ -64,9 +58,8 @@ function useItemForCleanup(item: Item, amount: number): boolean {
   if (item === Item.get("Dolphin King's map")) {
     assert.equal(amount, 1, `Cannot use ${amount} of ${item}, must use 1`);
     const breather =
-      Item.get(['aerated diving helmet', 'makeshift SCUBA gear']).find(
-        it => itemAmount(it) && canEquip(it)
-      ) || Item.get('snorkel');
+      Item.get(['aerated diving helmet', 'makeshift SCUBA gear']).find((it) => itemAmount(it) && canEquip(it)) ||
+      Item.get('snorkel');
     return useWithSetup(item, breather);
   }
 
@@ -87,13 +80,10 @@ export const cleanupUseItems: CleanupActionFunction = (plan, config) =>
     items: plan.use,
     config,
     commandPrefix: 'use',
-    process: items => {
+    process: (items) => {
       for (const [item, amount] of items) {
-        assert.ok(
-          useItemForCleanup(item, amount),
-          `Failed to use ${amount} of ${item}`
-        );
+        assert.ok(useItemForCleanup(item, amount), `Failed to use ${amount} of ${item}`);
       }
     },
-    shouldReplan: true,
+    shouldReplan: true
   });

@@ -1,4 +1,3 @@
-import {toItemMap} from '@philter/common/kol';
 import {
   availableAmount,
   canInteract,
@@ -6,18 +5,17 @@ import {
   equippedAmount,
   getCampground,
   getIngredients,
-  getProperty, Item,
+  getProperty,
+  Item,
   itemAmount,
   stashAmount,
   storageAmount,
   toBoolean
-} from "kolmafia";
+} from 'kolmafia';
 
-function countIngredientRecurse(
-  source: Item,
-  target: Item,
-  underConsideration: Set<Item>
-): number {
+import { toItemMap } from '@philter/common/kol';
+
+function countIngredientRecurse(source: Item, target: Item, underConsideration: Set<Item>): number {
   // If the source and target are the same item, return 0.
   // This prevents Philter from crafting an item into itself, even if a valid recipe chain exists.
   // (e.g. flat dough -> wad of dough -> flat dough)
@@ -37,8 +35,7 @@ function countIngredientRecurse(
       // Recursively count how many `source` is needed to make
       // each `ingredient`
       underConsideration.add(ingredient);
-      total +=
-        qty * countIngredientRecurse(source, ingredient, underConsideration);
+      total += qty * countIngredientRecurse(source, ingredient, underConsideration);
       underConsideration.delete(ingredient);
     }
   }
@@ -83,9 +80,7 @@ export function fullAmount(it: Item): number {
     // Include Closet
     (!toBoolean(getProperty('autoSatisfyWithCloset')) ? closetAmount(it) : 0) +
     // Include Hangk's Storage
-    (!toBoolean(getProperty('autoSatisfyWithStorage')) || !canInteract()
-      ? storageAmount(it)
-      : 0) -
+    (!toBoolean(getProperty('autoSatisfyWithStorage')) || !canInteract() ? storageAmount(it) : 0) -
     // Don't include Clan Stash
     (toBoolean(getProperty('autoSatisfyWithStash')) ? stashAmount(it) : 0)
   );
@@ -123,14 +118,9 @@ export function* grouper<T>(iter: Iterable<T>, size: number) {
  * @param size Number of items per chunk (must be at least 1)
  * @yields Maps of items. If the input item collection is empty, yields nothing.
  */
-export function* splitItemsSorted<T>(
-  items: Iterable<[Item, T]>,
-  size: number
-): IterableIterator<Map<Item, T>> {
+export function* splitItemsSorted<T>(items: Iterable<[Item, T]>, size: number): IterableIterator<Map<Item, T>> {
   const sortedChunks = grouper(
-    Array.from(items).sort(([itemA], [itemB]) =>
-      itemA.name.localeCompare(itemB.name)
-    ),
+    Array.from(items).sort(([itemA], [itemB]) => itemA.name.localeCompare(itemB.name)),
     size
   );
   for (const chunk of sortedChunks) {

@@ -1,3 +1,4 @@
+import React, {useMemo} from 'react';
 import {
   Callout,
   Colors,
@@ -6,10 +7,12 @@ import {
   NonIdealState,
   Spinner,
 } from '@blueprintjs/core';
-import {STATISTICS_ROUTE} from '@philter/common';
-import React, {useMemo} from 'react';
 import useSWR from 'swr';
+
+import {STATISTICS_ROUTE} from '@philter/common';
+
 import {fetchGetStatistics} from '../api';
+
 import './PanelInformation.css';
 
 const BULLET = <span className="PanelInformation__Bullet">&#8943;</span>;

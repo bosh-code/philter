@@ -1,22 +1,24 @@
 import {
-  logger,
-  ReadonlyCleanupRules,
-  ReadonlyStockingRules,
-} from '@philter/common/kol';
-import {
   canInteract,
   cliExecute,
   getRelated,
   haveSkill,
   isOnline,
-  isTradeable, Item,
-  myPrimestat, Skill, Stat,
+  isTradeable,
+  Item,
+  myPrimestat,
+  Skill,
+  Stat,
   toInt
-} from "kolmafia";
-import {assert, kmail} from 'kolmafia-util';
-import {cleanupAmount} from '../planner';
-import {splitItemsSorted} from '../util';
-import {CleanupActionFunction} from './base';
+} from 'kolmafia';
+import { assert, kmail } from 'kolmafia-util';
+
+import { logger, ReadonlyCleanupRules, ReadonlyStockingRules } from '@philter/common/kol';
+
+import { cleanupAmount } from '../planner';
+import { splitItemsSorted } from '../util';
+
+import { CleanupActionFunction } from './base';
 
 /**
  * Pulverizes/smashes items.
@@ -37,10 +39,7 @@ function pulverize(items: ReadonlyMap<Item, number>, simulateOnly: boolean) {
     logger.info(' ');
     if (!simulateOnly) {
       const tokensJoined = tokens.join(', ');
-      assert.ok(
-        cliExecute(`pulverize ${tokensJoined}`),
-        `Failed to pulverize ${tokensJoined}`
-      );
+      assert.ok(cliExecute(`pulverize ${tokensJoined}`), `Failed to pulverize ${tokensJoined}`);
     }
   }
 }
@@ -48,12 +47,7 @@ function pulverize(items: ReadonlyMap<Item, number>, simulateOnly: boolean) {
 function isWadable(it: Item): boolean {
   // twinkly powder to sleaze nuggets
   if (1438 <= toInt(it) && toInt(it) <= 1449) return true;
-  return Item.get([
-    'sewer nuggets',
-    'floaty sand',
-    'floaty pebbles',
-    'floaty gravel',
-  ]).includes(it);
+  return Item.get(['sewer nuggets', 'floaty sand', 'floaty pebbles', 'floaty gravel']).includes(it);
 }
 
 /**
@@ -174,9 +168,7 @@ function sendToPulverizingBot(
     logger.info('You cannot send items to Smashbot while in Ronin/Hardcore.');
     return false;
   } else if (!isOnline('smashbot')) {
-    logger.warn(
-      'Smashbot is offline! Pulverizables will not be sent at this time, just in case.'
-    );
+    logger.warn('Smashbot is offline! Pulverizables will not be sent at this time, just in case.');
     return false;
   } else {
     // Smashbot supports fine-grained malus control through the "goose_level"
@@ -193,7 +185,7 @@ function sendToPulverizingBot(
       [Item.get('cold nuggets'), 256],
       [Item.get('spooky nuggets'), 512],
       [Item.get('stench nuggets'), 1024],
-      [Item.get('sleaze nuggets'), 2048],
+      [Item.get('sleaze nuggets'), 2048]
     ]);
     let totalGooseLevel = 0;
     for (const [it, gooseLevel] of ITEM_GOOSE_LEVELS) {
@@ -210,10 +202,7 @@ function sendToPulverizingBot(
     // behavior (no "rock") would satisfy our requirements.
     let canUseRock = false;
     let shouldWarnRerun = false;
-    if (
-      itemsToSend.has(Item.get('floaty sand')) &&
-      cleanupRules.get(Item.get('floaty pebbles'))?.action === 'PULV'
-    ) {
+    if (itemsToSend.has(Item.get('floaty sand')) && cleanupRules.get(Item.get('floaty pebbles'))?.action === 'PULV') {
       // Default behavior:
       //  sand -> pebbles (stop)
       // With "rock":
@@ -255,7 +244,7 @@ function sendToPulverizingBot(
     }
 
     if (!simulateOnly) {
-      kmail({recipent: 'smashbot', message, items: itemsToSend});
+      kmail({ recipent: 'smashbot', message, items: itemsToSend });
     }
     return true;
   }
@@ -289,12 +278,8 @@ export const cleanupPulverize: CleanupActionFunction = (plan, config) => {
 
   if (!haveSkill(Skill.get('Pulverize'))) {
     return {
-      shouldReplan: sendToPulverizingBot(
-        plan.cleanupRules,
-        plan.stockingRules,
-        config.simulateOnly
-      ),
-      profit: 0,
+      shouldReplan: sendToPulverizingBot(plan.cleanupRules, plan.stockingRules, config.simulateOnly),
+      profit: 0
     };
   }
 
@@ -315,24 +300,15 @@ export const cleanupPulverize: CleanupActionFunction = (plan, config) => {
   let shouldReplan = itemsToSmash.size > 0;
 
   // Malus all items, including those gained from pulverizing.
-  if (
-    haveSkill(Skill.get('Pulverize')) &&
-    myPrimestat() === Stat.get('muscle')
-  ) {
+  if (haveSkill(Skill.get('Pulverize')) && myPrimestat() === Stat.get('muscle')) {
     if (malus(plan.cleanupRules, plan.stockingRules, config.simulateOnly)) {
       shouldReplan = true;
     }
   } else {
-    if (
-      sendToPulverizingBot(
-        plan.cleanupRules,
-        plan.stockingRules,
-        config.simulateOnly
-      )
-    ) {
+    if (sendToPulverizingBot(plan.cleanupRules, plan.stockingRules, config.simulateOnly)) {
       shouldReplan = true;
     }
   }
 
-  return {shouldReplan, profit: 0};
+  return { shouldReplan, profit: 0 };
 };

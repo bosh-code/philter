@@ -1,0 +1,13 @@
+# Prettier default
+**/.git
+**/.svn
+**/.hg
+**/node_modules
+
+# Dirs
+.github
+.idea
+
+# Files
+README.md
+yarn.lock

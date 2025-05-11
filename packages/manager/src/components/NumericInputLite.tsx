@@ -1,6 +1,7 @@
+import React from 'react';
 import {Classes} from '@blueprintjs/core';
 import classNames from 'classnames';
-import React from 'react';
+
 import './NumericInputLite.css';
 
 interface NumericInputLiteProps extends React.ComponentProps<'input'> {

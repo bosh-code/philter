@@ -17,10 +17,8 @@ import {
   Response,
   Routes,
   RULESET_ROUTE,
-  STATISTICS_ROUTE,
+  STATISTICS_ROUTE
 } from '@philter/common';
-
-/* eslint-disable @typescript-eslint/explicit-module-boundary-types */
 
 /**
  * API error class. Thrown when the API returns an error response.
@@ -37,6 +35,7 @@ export class ApiError extends Error {
     this.response = response;
   }
 }
+
 ApiError.prototype.name = 'ApiError';
 
 /**
@@ -46,10 +45,7 @@ ApiError.prototype.name = 'ApiError';
  * @return Asynchronous fetcher callback
  * @throws {ApiError}
  */
-const fetchFromApi = async <
-  Path extends keyof Routes,
-  Method extends RequestMethodFor<Path>
->(
+const fetchFromApi = async <Path extends keyof Routes, Method extends RequestMethodFor<Path>>(
   path: Path,
   method: Method,
   body: Readonly<Omit<Request<Path, Method>, 'path' | 'method'>>
@@ -57,14 +53,14 @@ const fetchFromApi = async <
   const preparedRequest = prepareRequestForSerialization({
     path,
     method,
-    ...body,
+    ...body
   });
 
   // KoLmafia requires the `relay=true` parameter in order to execute JavaScript
   // -based relay scripts.
   const fetchResponse = await fetch(`/${RELAY_SCRIPT_FILE}?relay=true`, {
     body: new URLSearchParams(preparedRequest),
-    method: 'POST',
+    method: 'POST'
   });
   if (!fetchResponse.ok) {
     let text;
@@ -79,46 +75,29 @@ const fetchFromApi = async <
 
   let response;
   try {
-    response = (await fetchResponse.json()) as
-      | Response<Path, Method>
-      | ErrorResponseBase;
+    response = (await fetchResponse.json()) as Response<Path, Method> | ErrorResponseBase;
   } catch (error) {
-    throw new ApiError(
-      `Invalid JSON returned from server (${error})\nResponse: ${response}`,
-      500,
-      response
-    );
+    throw new ApiError(`Invalid JSON returned from server (${error})\nResponse: ${response}`, 500, response);
   }
 
   if ('error' in response) {
-    throw new ApiError(
-      response.error.message,
-      response.error.code,
-      response.error.message
-    );
+    throw new ApiError(response.error.message, response.error.code, response.error.message);
   }
   return response;
 };
 
-export const fetchGetCleanupTableCategorized = () =>
-  fetchFromApi(CLEANUP_TABLES_CATEGORIZED_ROUTE, 'get', {});
+export const fetchGetCleanupTableCategorized = () => fetchFromApi(CLEANUP_TABLES_CATEGORIZED_ROUTE, 'get', {});
 
-export const fetchGetCleanupTableUncategorized = () =>
-  fetchFromApi(CLEANUP_TABLES_UNCATEGORIZED_ROUTE, 'get', {});
+export const fetchGetCleanupTableUncategorized = () => fetchFromApi(CLEANUP_TABLES_UNCATEGORIZED_ROUTE, 'get', {});
 
 export const fetchSaveCleanupRuleset = (cleanupRules: ReadonlyCleanupRuleset) =>
-  fetchFromApi(RULESET_ROUTE, 'post', {cleanupRules});
+  fetchFromApi(RULESET_ROUTE, 'post', { cleanupRules });
 
-export const fetchInventoryState = () =>
-  fetchFromApi(INVENTORY_ROUTE, 'get', {});
+export const fetchInventoryState = () => fetchFromApi(INVENTORY_ROUTE, 'get', {});
 
-export const fetchGetPhilterConfig = () =>
-  fetchFromApi(CONFIG_ROUTE, 'get', {});
+export const fetchGetPhilterConfig = () => fetchFromApi(CONFIG_ROUTE, 'get', {});
 
-export const fetchSavePhilterConfig = (
-  config: Readonly<PhilterConfig>,
-  shouldCopyDataFiles?: boolean
-) => fetchFromApi(CONFIG_ROUTE, 'post', {config, shouldCopyDataFiles});
+export const fetchSavePhilterConfig = (config: Readonly<PhilterConfig>, shouldCopyDataFiles?: boolean) =>
+  fetchFromApi(CONFIG_ROUTE, 'post', { config, shouldCopyDataFiles });
 
-export const fetchGetStatistics = () =>
-  fetchFromApi(STATISTICS_ROUTE, 'get', {});
+export const fetchGetStatistics = () => fetchFromApi(STATISTICS_ROUTE, 'get', {});

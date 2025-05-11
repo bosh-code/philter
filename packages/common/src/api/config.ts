@@ -3,6 +3,7 @@
  */
 
 import {PhilterConfig} from '../data/philter-config.js';
+
 import {RequestBase, SuccessResponseBase} from './base.js';
 
 export const CONFIG_ROUTE = '/config' as const;

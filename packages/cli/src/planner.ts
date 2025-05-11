@@ -1,27 +1,24 @@
-import {CleanupRule, StockingRule} from '@philter/common';
-import {
-  isCleanable,
-  logger,
-  ReadonlyCleanupRules,
-  ReadonlyStockingRules,
-  toItemMap,
-} from '@philter/common/kol';
 import {
   availableAmount,
   closetAmount,
   creatableAmount,
   getInventory,
   getProperty,
-  haveDisplay, Item,
+  haveDisplay,
+  Item,
   itemAmount,
   myPath,
   retrieveItem,
   toBoolean,
   toItem,
   userConfirm
-} from "kolmafia";
-import {getvar} from 'zlib.ash';
-import {countIngredient, fullAmount} from './util';
+} from 'kolmafia';
+import { getvar } from 'zlib.ash';
+
+import { CleanupRule, StockingRule } from '@philter/common';
+import { isCleanable, logger, ReadonlyCleanupRules, ReadonlyStockingRules, toItemMap } from '@philter/common/kol';
+
+import { countIngredient, fullAmount } from './util';
 
 /**
  * Cleanup execution plan generated from the cleanup rules by examining the
@@ -100,10 +97,7 @@ export function cleanupAmount(
       ? keepAmount
       : Math.max(
           keepAmount,
-          (stockingRule?.amount || 0) -
-            (getProperty('autoSatisfyWithCloset') === 'false'
-              ? 0
-              : closetAmount(item))
+          (stockingRule?.amount || 0) - (getProperty('autoSatisfyWithCloset') === 'false' ? 0 : closetAmount(item))
         );
   // Philter is limited by itemAmount(it) since we don't want to purchase
   // anything and closeted items may be off-limit, but if there's something in
@@ -113,9 +107,7 @@ export function cleanupAmount(
 
 export class CleanupPlanner {
   // When malling dangerously, don't ask the user about uncategorized items
-  shouldAskAboutUncategorizedItems = !toBoolean(
-    getvar('BaleOCD_MallDangerously')
-  );
+  shouldAskAboutUncategorizedItems = !toBoolean(getvar('BaleOCD_MallDangerously'));
 
   // Don't stop if "don't ask user" or it is a quest item, or it is being stocked.
   checkStopForRelay(item: Item, stockingRules: ReadonlyStockingRules): boolean {
@@ -133,9 +125,7 @@ export class CleanupPlanner {
         'Uncategorized item(s) have been found in inventory.\nAbort to categorize those items with the relay script?'
       )
     ) {
-      throw new Error(
-        'Please use the relay script to categorize missing items in inventory.'
-      );
+      throw new Error('Please use the relay script to categorize missing items in inventory.');
     }
     this.shouldAskAboutUncategorizedItems = false;
     return false;
@@ -152,10 +142,7 @@ export class CleanupPlanner {
    *      (i.e. there were no uncategorized items).
    *      `false` if the user chose to abort.
    */
-  makePlan(
-    cleanupRules: ReadonlyCleanupRules,
-    stockingRules: ReadonlyStockingRules
-  ): CleanupPlan | null {
+  makePlan(cleanupRules: ReadonlyCleanupRules, stockingRules: ReadonlyStockingRules): CleanupPlan | null {
     const plan: CleanupPlan = {
       breakBricko: new Map(),
       make: new Map(),
@@ -170,7 +157,7 @@ export class CleanupPlanner {
       reminder: new Map(),
       gift: new Map(),
       cleanupRules,
-      stockingRules,
+      stockingRules
     };
 
     for (const doodad of toItemMap(getInventory()).keys()) {
@@ -198,25 +185,24 @@ export class CleanupPlanner {
               }
 
               if (rule.shouldUseCreatableOnly) {
-                amountToUse = Math.min(
-                  amountToUse,
-                  creatableAmount(targetItem) * amountUsedPerCraft
-                );
+                amountToUse = Math.min(amountToUse, creatableAmount(targetItem) * amountUsedPerCraft);
               }
-              if (amountToUse !== 0)
+              if (amountToUse !== 0) {
                 plan.make.set(doodad, {
                   amount: amountToUse,
                   amountUsedPerCraft,
-                  targetItem,
+                  targetItem
                 });
+              }
               break;
             }
             case 'UNTN':
               plan.untinker.set(doodad, excess);
               break;
             case 'USE':
-              if (myPath().name === 'Bees Hate You' && doodad.name.includes('b'))
+              if (myPath().name === 'Bees Hate You' && doodad.name.includes('b')) {
                 break;
+              }
               plan.use.set(doodad, excess);
               break;
             case 'PULV':
@@ -263,8 +249,9 @@ export class CleanupPlanner {
       } else {
         if (this.checkStopForRelay(doodad, stockingRules)) return null;
         // Potentially disasterous, but this will cause the script to sell off unlisted items, just like it used to.
-        if (toBoolean(getvar('BaleOCD_MallDangerously')))
-          plan.mallsell.set(doodad, excess); // Backwards compatibility FTW!
+        if (toBoolean(getvar('BaleOCD_MallDangerously'))) {
+          plan.mallsell.set(doodad, excess);
+        } // Backwards compatibility FTW!
       }
     }
     return plan;

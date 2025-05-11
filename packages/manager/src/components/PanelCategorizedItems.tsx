@@ -1,19 +1,23 @@
+import React, {useCallback, useEffect, useMemo, useState} from 'react';
+import {useAsyncCallback} from 'react-async-hook';
 import {H3, NonIdealState, Spinner, Tab, Tabs} from '@blueprintjs/core';
+import {dequal} from 'dequal/lite';
+import useSWR from 'swr';
+
 import {
-  CleanupRule,
   CLEANUP_TABLES_CATEGORIZED_ROUTE,
+  CleanupRule,
   ItemInfo,
   ReadonlyCleanupRuleset,
 } from '@philter/common';
-import {dequal} from 'dequal/lite';
-import React, {useCallback, useEffect, useMemo, useState} from 'react';
-import {useAsyncCallback} from 'react-async-hook';
-import useSWR from 'swr';
+
 import {fetchGetCleanupTableCategorized, fetchSaveCleanupRuleset} from '../api';
 import {setErrorToast, setSavingToast, showInfoToast} from '../toaster';
 import {cleanupActionToString, typeCheck} from '../util';
-import './PanelCategorizedItems.css';
+
 import {RuleChangeHandler, TableItemCleanup} from './TableItemCleanup';
+
+import './PanelCategorizedItems.css';
 
 const CLEANUP_TAB_TYPES = {
   all: 0,

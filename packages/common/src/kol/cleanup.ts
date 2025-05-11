@@ -1,4 +1,4 @@
-import { todayToString, isDisplayable, Item } from "kolmafia";
+import { isDisplayable, Item,todayToString } from "kolmafia";
 
 /**
  * Checks if an item can be cleaned up by Philter.

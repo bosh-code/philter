@@ -3,6 +3,7 @@
  */
 
 import type {CleanupRuleset} from '../data/cleanup-rule.js';
+
 import type {RequestBase, SuccessResponseBase} from './base.js';
 
 export const RULESET_ROUTE = '/ruleset' as const;

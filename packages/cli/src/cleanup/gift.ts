@@ -1,21 +1,17 @@
-import {ReadonlyCleanupRules} from '@philter/common/kol';
-import {assert, sendToPlayer} from 'kolmafia-util';
-import {CleanupActionFunction, cleanupSimple} from './base';
-import { Item } from "kolmafia";
+import { Item } from 'kolmafia';
+import { assert, sendToPlayer } from 'kolmafia-util';
+
+import { ReadonlyCleanupRules } from '@philter/common/kol';
+
+import { CleanupActionFunction, cleanupSimple } from './base';
 
 // TODO: Extract GIFT rule at planning stage rather than action stage
 // Which will obviate this function
-function getRepresentativeGiftRule(
-  items: Iterable<Item>,
-  cleanupRules: ReadonlyCleanupRules
-) {
+function getRepresentativeGiftRule(items: Iterable<Item>, cleanupRules: ReadonlyCleanupRules) {
   for (const key of items) {
     const rule = cleanupRules.get(key);
     assert.ok(rule, `${key} does not have associated cleanup rule`);
-    assert.ok(
-      rule.action === 'GIFT',
-      `${key} is not associated with a GIFT action (got '${rule.action}')`
-    );
+    assert.ok(rule.action === 'GIFT', `${key} is not associated with a GIFT action (got '${rule.action}')`);
     return rule;
   }
   // This should never happen in practice
@@ -34,23 +30,20 @@ export const cleanupSendGifts: CleanupActionFunction = (plan, config) => {
       items,
       config,
       commandPrefix: `send gift to ${recipent}:`,
-      process: items => {
-        const giftRule = getRepresentativeGiftRule(
-          items.keys(),
-          plan.cleanupRules
-        );
+      process: (items) => {
+        const giftRule = getRepresentativeGiftRule(items.keys(), plan.cleanupRules);
         sendToPlayer({
           recipent: giftRule.recipent,
           message: giftRule.message,
           items,
-          insideNote: giftRule.message,
+          insideNote: giftRule.message
         });
       },
-      shouldReplan: false,
+      shouldReplan: false
     });
     shouldReplan ||= result.shouldReplan;
     profit += result.profit;
   }
 
-  return {shouldReplan, profit};
+  return { shouldReplan, profit };
 };

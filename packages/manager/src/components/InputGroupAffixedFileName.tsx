@@ -1,5 +1,6 @@
-import {Code, InputGroup} from '@blueprintjs/core';
 import React, {memo} from 'react';
+import {Code, InputGroup} from '@blueprintjs/core';
+
 import './InputGroupAffixedFileName.css';
 
 interface InputGroupAffixedFileNameProps

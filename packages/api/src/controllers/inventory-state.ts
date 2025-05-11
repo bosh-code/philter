@@ -2,8 +2,6 @@
  * @file Tools for managing `InventoryState` objects.
  */
 
-import {InventoryState} from '@philter/common';
-import {toItemMap} from '@philter/common/kol';
 import {
   displayAmount,
   getCloset,
@@ -12,6 +10,10 @@ import {
   haveDisplay,
   Item
 } from 'kolmafia';
+
+import {InventoryState} from '@philter/common';
+import {toItemMap} from '@philter/common/kol';
+
 import {itemMapToIdMapping} from '../util';
 
 /**

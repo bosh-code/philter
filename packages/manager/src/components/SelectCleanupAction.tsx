@@ -1,8 +1,11 @@
-import {Classes, Colors} from '@blueprintjs/core';
-import {CleanupAction, isCleanupAction, ItemInfo} from '@philter/common';
-import classNames from 'classnames';
 import React, {memo} from 'react';
+import {Classes, Colors} from '@blueprintjs/core';
+import classNames from 'classnames';
+
+import {CleanupAction, isCleanupAction, ItemInfo} from '@philter/common';
+
 import {shouldWarnOnPulverize, typeCheck} from '../util';
+
 import './SelectCleanupAction.css';
 
 /**

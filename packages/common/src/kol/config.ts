@@ -5,6 +5,7 @@
 import {myName, toBoolean, toInt} from 'kolmafia';
 import {_updateZlibVars} from 'philter.util.ash';
 import {getvar, setvar} from 'zlib.ash';
+
 import {PhilterConfig} from '../data/philter-config.js';
 
 /**

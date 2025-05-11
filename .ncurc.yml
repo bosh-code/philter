@@ -1,0 +1,9 @@
+---
+# Change package.json
+upgrade: true
+# Check peer dependencies before upgrading
+peer: true
+# Use yarn
+packageManager: yarn
+# Skip
+reject: [ \@philter* ]

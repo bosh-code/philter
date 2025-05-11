@@ -1,9 +1,12 @@
-import {logger} from '@philter/common/kol';
-import {autosell, autosellPrice, Item} from 'kolmafia';
-import {assert} from 'kolmafia-util';
-import {rnum} from 'zlib.ash';
-import {splitItemsSorted} from '../util';
-import {CleanupActionFunction, safeBatchItems} from './base';
+import { autosell, autosellPrice, Item } from 'kolmafia';
+import { assert } from 'kolmafia-util';
+import { rnum } from 'zlib.ash';
+
+import { logger } from '@philter/common/kol';
+
+import { splitItemsSorted } from '../util';
+
+import { CleanupActionFunction, safeBatchItems } from './base';
 
 function printAutosell(items: ReadonlyMap<Item, number>): number {
   let expectedProfitTotal = 0;
@@ -31,23 +34,20 @@ function printAutosell(items: ReadonlyMap<Item, number>): number {
  */
 export const cleanupAutosell: CleanupActionFunction = (plan, config) => {
   const items = plan.autosell;
-  if (items.size === 0) return {shouldReplan: false, profit: 0};
+  if (items.size === 0) return { shouldReplan: false, profit: 0 };
 
   const profit = printAutosell(items);
   if (!config.simulateOnly) {
     safeBatchItems(
       items,
-      chunk => {
+      (chunk) => {
         for (const [item, amount] of chunk) {
-          assert.ok(
-            autosell(amount, item),
-            `Failed to batch: autosell(${amount}, Item.get(\`${item}\`))`
-          );
+          assert.ok(autosell(amount, item), `Failed to batch: autosell(${amount}, Item.get(\`${item}\`))`);
         }
       },
-      chunk => assert.fail(`Failed to autosell ${chunk.size} item(s)`)
+      (chunk) => assert.fail(`Failed to autosell ${chunk.size} item(s)`)
     );
   }
 
-  return {shouldReplan: false, profit};
+  return { shouldReplan: false, profit };
 };

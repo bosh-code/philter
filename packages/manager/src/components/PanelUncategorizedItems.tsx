@@ -1,3 +1,5 @@
+import React, {useCallback, useEffect, useMemo} from 'react';
+import {useAsyncCallback} from 'react-async-hook';
 import {
   Button,
   ButtonGroup,
@@ -6,22 +8,24 @@ import {
   NonIdealState,
   Spinner,
 } from '@blueprintjs/core';
+import {dequal} from 'dequal/lite';
+import useSWR from 'swr';
+
 import {
-  CleanupRuleset,
   CLEANUP_TABLES_UNCATEGORIZED_ROUTE,
+  CleanupRuleset,
   ReadonlyCleanupRuleset,
 } from '@philter/common';
-import {dequal} from 'dequal/lite';
-import React, {useCallback, useEffect, useMemo} from 'react';
-import {useAsyncCallback} from 'react-async-hook';
-import useSWR from 'swr';
+
 import {
   fetchGetCleanupTableUncategorized,
   fetchSaveCleanupRuleset,
 } from '../api';
 import {setErrorToast, setSavingToast} from '../toaster';
-import './PanelUncategorizedItems.css';
+
 import {TableItemCleanup} from './TableItemCleanup';
+
+import './PanelUncategorizedItems.css';
 
 export const PanelUncategorizedItems = ({
   cleanupRules,

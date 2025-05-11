@@ -1,35 +1,25 @@
-import {PhilterConfig} from '@philter/common';
-import {
-  CONFIG_NAMES,
-  loadCleanupRulesetFile,
-  loadStockingRulesetFile,
-  logger,
-} from '@philter/common/kol';
-import {
-  cliExecute,
-  emptyCloset,
-  getProperty,
-  myAscensions,
-  myName,
-  toBoolean,
-} from 'kolmafia';
-import {assert, withProperties} from 'kolmafia-util';
-import {getvar} from 'zlib.ash';
-import {cleanupAutosell} from './cleanup/autosell';
-import {cleanupBreakApart} from './cleanup/break';
-import {cleanupMoveToCloset} from './cleanup/closet';
-import {cleanupDiscard} from './cleanup/discard';
-import {cleanupMoveToDisplayCase} from './cleanup/display';
-import {cleanupSendGifts} from './cleanup/gift';
-import {cleanupMakeItems} from './cleanup/make';
-import {cleanupMallsell} from './cleanup/mall';
-import {cleanupPulverize} from './cleanup/pulverize';
-import {cleanupMoveToClanStash} from './cleanup/stash';
-import {cleanupShowReminder} from './cleanup/todo';
-import {cleanupUntinker} from './cleanup/untinker';
-import {cleanupUseItems} from './cleanup/use';
-import {CleanupPlanner} from './planner';
-import {stock} from './stocking';
+import { cliExecute, emptyCloset, getProperty, myAscensions, myName, toBoolean } from 'kolmafia';
+import { assert, withProperties } from 'kolmafia-util';
+import { getvar } from 'zlib.ash';
+
+import { PhilterConfig } from '@philter/common';
+import { CONFIG_NAMES, loadCleanupRulesetFile, loadStockingRulesetFile, logger } from '@philter/common/kol';
+
+import { cleanupAutosell } from './cleanup/autosell';
+import { cleanupBreakApart } from './cleanup/break';
+import { cleanupMoveToCloset } from './cleanup/closet';
+import { cleanupDiscard } from './cleanup/discard';
+import { cleanupMoveToDisplayCase } from './cleanup/display';
+import { cleanupSendGifts } from './cleanup/gift';
+import { cleanupMakeItems } from './cleanup/make';
+import { cleanupMallsell } from './cleanup/mall';
+import { cleanupPulverize } from './cleanup/pulverize';
+import { cleanupMoveToClanStash } from './cleanup/stash';
+import { cleanupShowReminder } from './cleanup/todo';
+import { cleanupUntinker } from './cleanup/untinker';
+import { cleanupUseItems } from './cleanup/use';
+import { CleanupPlanner } from './planner';
+import { stock } from './stocking';
 
 /**
  * Loads cleanup rules from the player's cleanup ruleset file into a map.
@@ -41,18 +31,9 @@ import {stock} from './stocking';
 function loadCurrentCleanupRules(dataFileName: string) {
   // TODO: Hopefully, nobody is using `OCD_<name>_Data.txt`.
   // Maybe we could remove it altogether
-  const cleanupRules =
-    loadCleanupRulesetFile(dataFileName) ||
-    loadCleanupRulesetFile(`OCD_${myName()}_Data.txt`);
-  assert.ok(
-    cleanupRules,
-    `Failed to load cleanup rules from file "${dataFileName}"`
-  );
-  assert.isAbove(
-    cleanupRules.size,
-    0,
-    `Failed to load cleanup rules, file "${dataFileName}" is empty or missing`
-  );
+  const cleanupRules = loadCleanupRulesetFile(dataFileName) || loadCleanupRulesetFile(`OCD_${myName()}_Data.txt`);
+  assert.ok(cleanupRules, `Failed to load cleanup rules from file "${dataFileName}"`);
+  assert.isAbove(cleanupRules.size, 0, `Failed to load cleanup rules, file "${dataFileName}" is empty or missing`);
   return cleanupRules;
 }
 
@@ -62,12 +43,8 @@ function doPhilter(config: Readonly<PhilterConfig>): {
 } {
   let finalSale = 0;
 
-  const cleanupRules = loadCurrentCleanupRules(
-    `OCDdata_${config.dataFileName}.txt`
-  );
-  let stockingRules = loadStockingRulesetFile(
-    `OCDstock_${config.stockFileName}.txt`
-  );
+  const cleanupRules = loadCurrentCleanupRules(`OCDdata_${config.dataFileName}.txt`);
+  let stockingRules = loadStockingRulesetFile(`OCDstock_${config.stockFileName}.txt`);
   if (!stockingRules) {
     if (getvar('BaleOCD_Stock') === '1') {
       assert.fail('You are missing item stocking information.');
@@ -92,18 +69,22 @@ function doPhilter(config: Readonly<PhilterConfig>): {
     cleanupMoveToDisplayCase,
     cleanupMoveToCloset,
     cleanupMoveToClanStash,
-    cleanupSendGifts,
+    cleanupSendGifts
   ];
 
   let plan = planner.makePlan(cleanupRules, stockingRules);
-  if (!plan) return {success: false, finalSale};
+  if (!plan) {
+    return { success: false, finalSale };
+  }
 
   for (const actionFunc of actions) {
     const result = actionFunc(plan, config);
     finalSale += result.profit;
     if (result.shouldReplan) {
       plan = planner.makePlan(cleanupRules, stockingRules);
-      if (!plan) return {success: false, finalSale};
+      if (!plan) {
+        return { success: false, finalSale };
+      }
     }
   }
 
@@ -119,7 +100,7 @@ function doPhilter(config: Readonly<PhilterConfig>): {
     );
   }
 
-  return {success: true, finalSale};
+  return { success: true, finalSale };
 }
 
 /**
@@ -152,10 +133,10 @@ export function philter(config: Readonly<PhilterConfig>): number {
     {
       autoSatisfyWithCloset: 'false',
       autoSatisfyWithStash: 'false',
-      autoSatisfyWithStorage: 'false',
+      autoSatisfyWithStorage: 'false'
     },
     () => {
-      const {success, finalSale} = doPhilter(config);
+      const { success, finalSale } = doPhilter(config);
       return success ? finalSale : -1;
     }
   );

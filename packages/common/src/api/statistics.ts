@@ -3,6 +3,7 @@
  */
 
 import {PhilterStatistics} from '../data/philter-statistics.js';
+
 import {RequestBase, SuccessResponseBase} from './base.js';
 
 export const STATISTICS_ROUTE = '/statistics';

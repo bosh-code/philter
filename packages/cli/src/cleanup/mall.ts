@@ -1,17 +1,13 @@
-import {PhilterConfig} from '@philter/common';
-import {logger, ReadonlyCleanupRules} from '@philter/common/kol';
-import {
-  historicalAge,
-  historicalPrice, Item,
-  mallPrice,
-  print,
-  putShop,
-  userConfirm
-} from "kolmafia";
-import {assert, sendToPlayer} from 'kolmafia-util';
-import {rnum} from 'zlib.ash';
-import {splitItemsSorted} from '../util';
-import {CleanupActionFunction, safeBatchItems} from './base';
+import { historicalAge, historicalPrice, Item, mallPrice, print, putShop, userConfirm } from 'kolmafia';
+import { assert, sendToPlayer } from 'kolmafia-util';
+import { rnum } from 'zlib.ash';
+
+import { PhilterConfig } from '@philter/common';
+import { logger, ReadonlyCleanupRules } from '@philter/common/kol';
+
+import { splitItemsSorted } from '../util';
+
+import { CleanupActionFunction, safeBatchItems } from './base';
 
 function shouldUseMulti(config: Readonly<PhilterConfig>) {
   return config.mallMultiName !== '' && config.canUseMallMulti;
@@ -27,10 +23,7 @@ function shouldUseMulti(config: Readonly<PhilterConfig>) {
  *		The returned price is guaranteed to be at least 0.
  */
 function salePrice(it: Item, minPrice: number): number {
-  const price =
-    historicalAge(it) < 1 && historicalPrice(it) > 0
-      ? historicalPrice(it)
-      : mallPrice(it);
+  const price = historicalAge(it) < 1 && historicalPrice(it) > 0 ? historicalPrice(it) : mallPrice(it);
   return Math.max(minPrice, price, 0);
 }
 
@@ -39,9 +32,7 @@ function printMallAndMakePriceCache(
   cleanupRules: ReadonlyCleanupRules,
   config: Readonly<PhilterConfig>
 ) {
-  const com = shouldUseMulti(config)
-    ? `send to mallmulti '${config.mallMultiName}': `
-    : 'mallsell ';
+  const com = shouldUseMulti(config) ? `send to mallmulti '${config.mallMultiName}': ` : 'mallsell ';
 
   let finalSale = 0;
   const priceCache = new Map<Item, number>();
@@ -92,18 +83,12 @@ function printMallAndMakePriceCache(
   return [finalSale, priceCache] as const;
 }
 
-function sendToMallMulti(
-  items: ReadonlyMap<Item, number>,
-  mallMultiName: string,
-  message: string
-) {
+function sendToMallMulti(items: ReadonlyMap<Item, number>, mallMultiName: string, message: string) {
   // Some users have reported Philter occasionally sending items to an account
   // named "False". While the exact cause is unknown, this should serve as a
   // stopgap measure.
   if (mallMultiName === '' || mallMultiName.toLowerCase() === 'false') {
-    logger.error(
-      `Invalid mall multi account ID ("${mallMultiName}"). Please report the issue at https://kolmafia.us/`
-    );
+    logger.error(`Invalid mall multi account ID ("${mallMultiName}"). Please report the issue at https://kolmafia.us/`);
     const timeout = 30;
     const warningMessage =
       `Philter has detected that it is about to send items to a mall multi account named "${mallMultiName}". ` +
@@ -122,7 +107,7 @@ function sendToMallMulti(
     sendToPlayer({
       recipent: mallMultiName,
       message,
-      items,
+      items
     });
   }
 }
@@ -132,41 +117,30 @@ function sendToMallMulti(
  */
 export const cleanupMallsell: CleanupActionFunction = (plan, config) => {
   const items = plan.mallsell;
-  if (items.size === 0) return {shouldReplan: false, profit: 0};
+  if (items.size === 0) return { shouldReplan: false, profit: 0 };
 
-  const [profit, priceCache] = printMallAndMakePriceCache(
-    items,
-    plan.cleanupRules,
-    config
-  );
+  const [profit, priceCache] = printMallAndMakePriceCache(items, plan.cleanupRules, config);
 
   if (!config.simulateOnly) {
     if (shouldUseMulti(config)) {
-      sendToMallMulti(
-        items,
-        config.mallMultiName,
-        config.mallMultiKmailMessage
-      );
+      sendToMallMulti(items, config.mallMultiName, config.mallMultiKmailMessage);
     } else {
       safeBatchItems(
         items,
-        chunk => {
+        (chunk) => {
           for (const [item, amount] of chunk) {
             const cachedPrice = priceCache.get(item);
-            assert.ok(
-              cachedPrice !== undefined,
-              `Price for ${item} is not cached`
-            );
+            assert.ok(cachedPrice !== undefined, `Price for ${item} is not cached`);
             assert.ok(
               putShop(cachedPrice, 0, amount, item),
               `Failed to batch: putShop(${cachedPrice}, 0, ${amount}, Item.get(\`${item}\`))`
             );
           }
         },
-        chunk => assert.fail(`Failed to put ${chunk.size} item(s) in shop`)
+        (chunk) => assert.fail(`Failed to put ${chunk.size} item(s) in shop`)
       );
     }
   }
 
-  return {shouldReplan: false, profit};
+  return { shouldReplan: false, profit };
 };

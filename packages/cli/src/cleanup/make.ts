@@ -1,5 +1,6 @@
-import { Class, create, Item, myClass } from "kolmafia";
-import {CleanupActionFunction, cleanupSimple} from './base';
+import { Class, create, Item, myClass } from 'kolmafia';
+
+import { CleanupActionFunction, cleanupSimple } from './base';
 
 const SAUCE_MULT_POTIONS: ReadonlySet<Item> = new Set(
   Item.get([
@@ -40,7 +41,7 @@ const SAUCE_MULT_POTIONS: ReadonlySet<Item> = new Set(
     'peach lozenge',
     'cologne of contempt',
     'potion of temporary gr8ness',
-    'blackberry polite',
+    'blackberry polite'
   ])
 );
 
@@ -58,12 +59,7 @@ function numCrafted(item: Item): number {
   return 1;
 }
 
-function makeItemForCleanup(
-  item: Item,
-  target: Item,
-  amount: number,
-  makeAmount: number
-): boolean {
+function makeItemForCleanup(item: Item, target: Item, amount: number, makeAmount: number): boolean {
   if (makeAmount === 0) return false;
   amount = (amount / makeAmount) * numCrafted(item);
   if (amount > 0) return create(amount, target);
@@ -79,15 +75,10 @@ export const cleanupMakeItems: CleanupActionFunction = (plan, config) =>
     config,
     commandPrefix: 'transform',
     commandItemSuffix: (item, data) => `into ${data.targetItem}`,
-    process: items => {
+    process: (items) => {
       for (const [item, data] of items) {
-        makeItemForCleanup(
-          item,
-          data.targetItem,
-          data.amount,
-          data.amountUsedPerCraft
-        );
+        makeItemForCleanup(item, data.targetItem, data.amount, data.amountUsedPerCraft);
       }
     },
-    shouldReplan: true,
+    shouldReplan: true
   });

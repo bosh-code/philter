@@ -2,6 +2,8 @@
  * @file Basic type-safe routing framework built on top of universal-router.
  */
 
+import UniversalRouterSync from 'universal-router/sync';
+
 import {
   ErrorResponseBase,
   Request,
@@ -11,7 +13,6 @@ import {
   ResponseBase,
   Routes,
 } from '@philter/common';
-import UniversalRouterSync from 'universal-router/sync';
 
 /**
  * Custom context object interface.

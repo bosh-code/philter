@@ -1,3 +1,12 @@
+import React, {memo, useCallback, useMemo, useState} from 'react';
+import {
+  AutoSizer,
+  Column,
+  SortDirection,
+  SortDirectionType,
+  Table,
+  TableHeaderRenderer,
+} from 'react-virtualized';
 import {
   Button,
   ButtonGroup,
@@ -8,9 +17,8 @@ import {
   IconName,
   InputGroup,
   Intent,
-  UL,
-} from '@blueprintjs/core';
-import {Popover} from '@blueprintjs/core';
+Popover,  UL} from '@blueprintjs/core';
+import classNames from 'classnames';
 
 import {
   CleanupRule,
@@ -19,21 +27,13 @@ import {
   ReadonlyCleanupRuleset,
   ReadonlyInventoryState,
 } from '@philter/common';
-import classNames from 'classnames';
-import React, {memo, useCallback, useMemo, useState} from 'react';
-import {
-  AutoSizer,
-  Column,
-  SortDirection,
-  SortDirectionType,
-  Table,
-  TableHeaderRenderer,
-} from 'react-virtualized';
+
 import {CleanupRulePicker} from './CleanupRulePicker';
 import {NumericInputLite} from './NumericInputLite';
+
 import './TableItemCleanup.css';
 
-/* eslint-disable react/no-unescaped-entities */
+
 
 /** Name keys of sortable columns in `<TableItemCleanup/>`. */
 const enum SortableColumnKey {
@@ -394,7 +394,7 @@ interface TableItemCleanupProps
 // eslint-disable-next-line prefer-arrow-callback
 export const TableItemCleanup = memo(function TableItemCleanup({
   // className is already provided by React.ComponentProps<'section'>
-  // eslint-disable-next-line react/prop-types
+
   className,
   cleanupRules,
   disableReset,
@@ -518,7 +518,7 @@ export const TableItemCleanup = memo(function TableItemCleanup({
         dataKey: SortableColumnKey.ITEM_NAME,
         flexGrow: 5,
         label: 'Item',
-        // eslint-disable-next-line react/display-name
+
         renderCell: item => <CellItemName item={item} />,
         width: 200,
       }),
@@ -555,12 +555,12 @@ export const TableItemCleanup = memo(function TableItemCleanup({
         dataKey: SortableColumnKey.MALL_PRICE,
         flexGrow: 1,
         label: <abbr title="5th lowest mall price">Price</abbr>,
-        // eslint-disable-next-line react/display-name
+
         renderCell: item => <CellMallPrice item={item} />,
         width: 80,
       }),
       makeColumn({
-        // eslint-disable-next-line react/display-name
+
         renderCell: item => (
           <CellKeepAmount
             item={item}
@@ -575,7 +575,7 @@ export const TableItemCleanup = memo(function TableItemCleanup({
         width: 70,
       }),
       makeColumn({
-        // eslint-disable-next-line react/display-name
+
         renderCell: item => (
           <CellItemAction
             item={item}

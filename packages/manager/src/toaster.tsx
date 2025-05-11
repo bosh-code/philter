@@ -2,8 +2,9 @@
  * @file Provides methods for toast-based notifications.
  */
 
-import { OverlayToaster } from "@blueprintjs/core";
 import React from 'react';
+import { OverlayToaster } from "@blueprintjs/core";
+
 import {ApiError} from './api';
 
 /**

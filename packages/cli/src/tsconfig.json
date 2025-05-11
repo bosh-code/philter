@@ -36,5 +36,5 @@
     // libs (e.g. "lib.es2017.object.d.ts")
     "types": []
   },
-  "references": [{"path": "../../common"}]
+  "references": [{ "path": "../../common" }]
 }

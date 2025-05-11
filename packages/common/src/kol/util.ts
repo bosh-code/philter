@@ -1,4 +1,4 @@
-import {fileToArray, toInt, Item} from 'kolmafia';
+import {fileToArray, Item,toInt} from 'kolmafia';
 
 /**
  * Factory function for functions that parse a text file into a Map using

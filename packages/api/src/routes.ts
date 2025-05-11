@@ -2,11 +2,14 @@
  * @file Routes for the app
  */
 
+import { Item } from 'kolmafia';
+import {getvar} from 'zlib.ash';
+
 import {
-  CleanupAction,
-  CleanupRule,
   CLEANUP_TABLES_CATEGORIZED_ROUTE,
   CLEANUP_TABLES_UNCATEGORIZED_ROUTE,
+  CleanupAction,
+  CleanupRule,
   CONFIG_ROUTE,
   INVENTORY_ROUTE,
   RULESET_ROUTE,
@@ -21,8 +24,7 @@ import {
   saveCleanupRulesetFile,
   saveStockingRulesetFile,
 } from '@philter/common/kol';
-import { Item } from 'kolmafia';
-import {getvar} from 'zlib.ash';
+
 import {
   loadCleanupRulesetForCurrentPlayer,
   saveCleanupRulesetForCurrentPlayer,

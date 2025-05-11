@@ -2,8 +2,6 @@
  * @file Tools for managing `ItemInfo` objects.
  */
 
-import {ItemInfo} from '@philter/common';
-import {toItemMap} from '@philter/common/kol';
 import {
   autosellPrice,
   craftType,
@@ -12,10 +10,12 @@ import {
   historicalPrice,
   isDisplayable,
   isGiftable,
+  Item,
   toInt,
-  toItem,
-  Item
-} from 'kolmafia';
+  toItem} from 'kolmafia';
+
+import {ItemInfo} from '@philter/common';
+import {toItemMap} from '@philter/common/kol';
 
 const BREAKABLE_ITEMS = Item.get([
   'BRICKO hat',

@@ -2,9 +2,10 @@
  * @file Defines routes for Cleanup Tables.
  */
 
+import {CleanupRuleset} from '../data/cleanup-rule.js';
 import {InventoryState} from '../data/inventory-state.js';
 import {ItemInfo} from '../data/item-info.js';
-import {CleanupRuleset} from '../data/cleanup-rule.js';
+
 import {RequestBase, SuccessResponseBase} from './base.js';
 
 export const CLEANUP_TABLES_CATEGORIZED_ROUTE = '/cleanup-tables/categorized';

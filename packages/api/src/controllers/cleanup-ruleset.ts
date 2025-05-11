@@ -2,14 +2,16 @@
  * @file Tools for managing `CleanupRuleset` objects.
  */
 
+import {type Item,myName} from 'kolmafia';
+import {getvar} from 'zlib.ash';
+
 import {CleanupRule} from '@philter/common';
 import {
   CONFIG_NAMES,
   loadCleanupRulesetFile,
   saveCleanupRulesetFile,
 } from '@philter/common/kol';
-import {myName, type Item} from 'kolmafia';
-import {getvar} from 'zlib.ash';
+
 import {getFullDataFileName} from './philter-config';
 
 /**
